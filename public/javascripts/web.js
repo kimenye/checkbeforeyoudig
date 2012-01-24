@@ -25,9 +25,11 @@ $(document).ready(function() {
 	
 	$(window).resize(function() {
 		if (map) {
-			console.log("Resizing the map");
-			//map.onResize();
 			google.maps.event.trigger(map, 'resize');
 		}
+	});
+	
+	$('#submit_query').bind("click", function(event, ui) {
+		//alert('Submitting the query');
 	});
 });

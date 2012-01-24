@@ -3,5 +3,15 @@
 	form
 		fieldset
 			legend Work Criteria
+			p Enter the criteria for the work intended to be completed
 			label(for="start_address") Where
-			input#start_address(type="text")
+			input#start_address.long_text(type="text", name="start_address")
+			br
+			br
+			label(for="type_of_work") Type of Work
+			select#type_of_work(name: "flight_type")
+				option(value='excavation') Excavation
+				option(value='overhead-repairs') Overhead Repairs
+			br
+			br
+			input#submit_query(type="button", value="Submit")
