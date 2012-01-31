@@ -14,7 +14,7 @@ body {
   bottom: 25px;
   width: 400px;
   right: 25px;
-  z-index: 99999;
+  z-index: 9999;
   padding: 1em;
   background: #fff;
 }
