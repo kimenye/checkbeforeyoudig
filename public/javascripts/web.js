@@ -2,6 +2,12 @@ $(document).ready(function() {
 	var geocoder;
 	var map;
 	var circle;
+	var drawingManager = new google.maps.drawing.DrawingManager({
+		drawingControlOptions: {
+			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.CIRCLE]
+		}
+	});
+	
 	
 	function initialize() {
 		geocoder = new google.maps.Geocoder();
@@ -14,6 +20,7 @@ $(document).ready(function() {
 					mapTypeId: google.maps.MapTypeId.ROADMAP
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+				drawingManager.setMap(map);
 			} 
 			else 
 			{
