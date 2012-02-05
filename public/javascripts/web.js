@@ -48,27 +48,35 @@ $(document).ready(function() {
 	}
 	
 	function onJson(data,map) {
-		// debugger;
 		if (data && data.features) {
 			
-			var ft = new GeoJSON(data);
+			var bd = new google.maps.LatLngBounds();
+			var ft = new GeoJSON(data, parcelStyle);
 			if (ft.length) {
-				// console.log("Number of features: " + ft.length);
-				for (var i = 0; i < ft.length; i++){
-					ft[i].setMap(map);
-					setInfoWindow(ft[i], map);
+				for(var i=0;i<ft.length;i++) {
+					setupFeature(ft[i], map);
+					var p = ft[i].getBounds();
+					bd.union(p);
 				}
 			}
 			else
 			{
-				ft.setMap(map);
+				setupFeature(ft,map);
+				bd.union(ft.getBounds());
 			}
+			map.fitBounds(bd);
+			map.setZoom(map.getBoundsZoomLevel(bd));
+			map.setCenter(bd.getCenter());
 		}
+	}
+	
+	function setupFeature(feature,map) {
+		feature.setMap(map);
+		setInfoWindow(feature,map);
 	}
 	
 	function setInfoWindow (feature, map) {
 		google.maps.event.addListener(feature, "click", function(event) {
-			// debugger;
 			var content = "<div id='infoBox'><strong>Zone Properties</strong><br />";
 			for (var j in this.geojsonProperties) {
 				content += j + ": " + this.geojsonProperties[j] + "<br />";
@@ -80,6 +88,28 @@ $(document).ready(function() {
 		});
 	}
 	
+	var parcelStyle = {
+		strokeColor: "#FF7800",
+		strokeOpacity: 1,
+		strokeWeight: 1,
+		fillColor: "#46461F",
+		fillOpacity: 0.15
+	};
+	
+	if (!google.maps.Polygon.prototype.getBounds) {
+        google.maps.Polygon.prototype.getBounds = function(latLng) {
+            var bounds = new google.maps.LatLngBounds();
+            var paths = this.getPaths();
+            var path;
+            for (var p = 0; p < paths.getLength(); p++) {
+                path = paths.getAt(p);
+                for (var i = 0; i < path.getLength(); i++) {
+                    bounds.extend(path.getAt(i));
+                }
+            }
+            return bounds;
+        }
+    }
 	
 	$(window).resize(function() {
 		if (map) {
@@ -96,7 +126,6 @@ $(document).ready(function() {
 			geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
 				if (status == google.maps.GeocoderStatus.OK) {
 					var point = results[0].geometry;
-					// debugger;
 					console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
 
 					if (circle) {
