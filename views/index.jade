@@ -1,19 +1,7 @@
-//-#header.rounded
-//-	h1 Dial Before you Dig
-#map_canvas.map.right
-.toolbox.rounded
-	fieldset
-		legend Work Criteria
-		p Enter the criteria for the work intended to be completed (e.g. Ziwani) or use the toolbar on the top left to draw your area with the mouse.
-		label(for="start_address") Where
-		input#start_address.long_text(type="text", name="start_address")
-		br
-		br
-		label(for="type_of_work") Type of Work
-		select#type_of_work(name: "flight_type")
-			option(value='excavation') Excavation
-			option(value='overhead-repairs') Overhead Repairs
-		br
-		br
-		input#submit_query(type="button", value="Submit")
-#loading
+#map_canvas.map
+#header.light.shadow.rounded
+	p "Check before you dig" is a service that allows public infrastructure contractors to know what underground assets (e.g. water and gas pipes) or overhead assets (e.g. electricity and communication cables) may be affected by their work. Enter the location you would like to search, or use the drawing tools on the right to select the area to search.
+	.clear
+	#where_holder.holder.left
+		label.strong(for='txt_where') Where
+		input#txt_where(name='txt_where', placeholder='e.g. Changamwe')

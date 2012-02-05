@@ -6,7 +6,8 @@ $(document).ready(function() {
 	
 	var drawingManager = new google.maps.drawing.DrawingManager({
 		drawingControlOptions: {
-			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.CIRCLE]
+			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.CIRCLE],
+			position: google.maps.ControlPosition.TOP_RIGHT
 		}
 	});
 	
@@ -19,7 +20,15 @@ $(document).ready(function() {
 				var myOptions = {
 					zoom: 13,
 					center: results[0].geometry.location,
-					mapTypeId: google.maps.MapTypeId.ROADMAP
+					mapTypeId: google.maps.MapTypeId.ROADMAP,
+					panControlOptions: {
+						position: google.maps.ControlPosition.RIGHT_CENTER
+					},
+					zoomControlOptions: {
+					       style: google.maps.ZoomControlStyle.LARGE,
+				        position: google.maps.ControlPosition.RIGHT_CENTER
+				    },
+					streetViewControl: false					
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 				drawingManager.setMap(map);
@@ -65,8 +74,12 @@ $(document).ready(function() {
 				bd.union(ft.getBounds());
 			}
 			map.fitBounds(bd);
-			map.setZoom(map.getBoundsZoomLevel(bd));
+			// map.setZoom(map.getBoundsZoomLevel(bd));
 			map.setCenter(bd.getCenter());
+			// console.log("Max zoom " + map.zoom);
+			// var zoom = getZoomForBounds(bd);
+			// map.setZoom(zoom);
+			// console.log("Set zoom for bounds " + zoom);
 		}
 	}
 	
@@ -96,6 +109,19 @@ $(document).ready(function() {
 		fillOpacity: 0.15
 	};
 	
+	function getZoomForBounds(bounds) {
+		var GLOBE_WIDTH = 256; // a constant in Google's map projection
+		var west = bounds.getSouthWest().lng();
+		var east = bounds.getNorthEast().lng();
+		var angle = east - west;
+		if (angle < 0) {
+		  angle += 360;
+		}
+		console.log($('#map_canvas').width());
+		var zoom = Math.round(Math.log($('#map_canvas').width() * 360 / angle / GLOBE_WIDTH) / Math.LN2);
+		return zoom;
+	}
+	
 	if (!google.maps.Polygon.prototype.getBounds) {
         google.maps.Polygon.prototype.getBounds = function(latLng) {
             var bounds = new google.maps.LatLngBounds();
@@ -116,6 +142,36 @@ $(document).ready(function() {
 			google.maps.event.trigger(map, 'resize');
 		}
 	});
+	
+	$("#txt_where").keypress(function(event) {
+		if ( event.which == 13 ) {
+			$('#loading').addClass('overlay');
+			search($('#txt_where').val());
+		}
+	});
+	
+	function search(text) {
+		geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
+			if (status == google.maps.GeocoderStatus.OK) {
+				var point = results[0].geometry;
+				console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
+
+				if (circle) {
+					circle.setMap(null);
+					circle = null;
+				}
+				 
+				circle = new google.maps.Circle({radius: 1000, center: point.location});
+				// map.fitBounds(circle.getBounds());
+				circle.setMap(map);
+			}
+			else
+			{
+				console.log("Geocode was not successful for the following reason: " + status);
+			}
+			$('#loading').removeClass('overlay');
+		});
+	}
 	
 	$('#submit_query').bind("click", function(event, ui) {
 		var text = $('#start_address').val();

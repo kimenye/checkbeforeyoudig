@@ -14,3 +14,5 @@
 /*	background-image:url('/images/loading.gif');
 	background-repeat: no-repeat;
 */}
+
+.shadow { -moz-box-shadow: 0px 2px 4px #999; -webkit-box-shadow: 0px 2px 4px #999; box-shadow: 0px 2px 4px #999; }

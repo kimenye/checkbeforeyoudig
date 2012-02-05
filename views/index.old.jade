@@ -1,0 +1,38 @@
+.container_12
+	#header.grid_12
+	#map_canvas.map
+	.toolbox.rounded
+		fieldset
+			legend Work Criteria
+			p Enter the criteria for the work intended to be completed (e.g. Ziwani) or use the toolbar on the top left to draw your area with the mouse.
+			label(for="start_address") Where
+			input#start_address.long_text(type="text", name="start_address")
+			br
+			br
+			label(for="type_of_work") Type of Work
+			select#type_of_work(name: "flight_type")
+				option(value='excavation') Excavation
+				option(value='overhead-repairs') Overhead Repairs
+			br
+			br
+			input#submit_query(type="button", value="Submit")
+#loading
+
+
+-#map_canvas.map.right
+-.toolbox.rounded
+-       fieldset
+-               legend Work Criteria
+-               p Enter the criteria for the work intended to be completed (e.g. Ziwani) or use the toolbar on the top left to draw your area with the mouse.
+-               label(for="start_address") Where
+-               input#start_address.long_text(type="text", name="start_address")
+-               br
+-               br
+-               label(for="type_of_work") Type of Work
+-               select#type_of_work(name: "flight_type")
+-                       option(value='excavation') Excavation
+-                       option(value='overhead-repairs') Overhead Repairs
+-               br
+-               br
+-               input#submit_query(type="button", value="Submit")
+-#loading
