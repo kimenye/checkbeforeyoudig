@@ -15,10 +15,10 @@ body
   padding: 1em
   background:#ffffff
 .rounded
-  border-radius: 8px 0 0 0 0
-  -moz-border-radius: 8px
-  -webkit-border-radius: 8px
-  -khtml-border-radius: 8px
+  border-radius: 0 0 8px 0
+  -moz-border-radius: 0 0 8px 0
+  -webkit-border-radius: 0 0 8px 0
+  -khtml-border-radius: 0 0 8px 0
 input, select
   margin-left: 10px
   border: 1px solid #000000
@@ -31,6 +31,14 @@ input, select
   width: 75%
   min-width: 760px
   position: fixed
+  background: url("/images/cubes.png") repeat scroll 0 0 #FFFFFF
+#sidebar
+  left: 5px
+  position: fixed
+  width: 300px
+  min-height: 400px
+  top: 105px
+  padding: 5px
   background: url("/images/cubes.png") repeat scroll 0 0 #FFFFFF
 #header p
   padding: 0px 5px 0 5px
@@ -61,3 +69,16 @@ input
   outline: medium none;
   padding: 5px
   width: 300px
+.hide
+  display: none
+.show
+  display: block
+.search
+  height: 300px
+li
+  list-style: none
+  padding: 5px
+.search, .searches
+  padding: 0
+.item
+  border: 1px solid black;

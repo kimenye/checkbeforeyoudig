@@ -5,3 +5,19 @@
 	#where_holder.holder.left
 		label.strong(for='txt_where') Where
 		input#txt_where(name='txt_where', placeholder='e.g. Changamwe')
+#sidebar.light.shadow.rounded
+	#accordion
+		.searches
+			h4 
+				a(href='#') My Searches
+			.search
+				ul#searches.searches
+					li#no-searches
+						span No Searches
+					li.hide
+						a(href='#')
+							span Changamwe
+						a.ui-icon.ui-icon-trash.right(href='#')
+		.results
+			h4
+				a(href='#') My Results

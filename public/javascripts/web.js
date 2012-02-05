@@ -137,6 +137,8 @@ $(document).ready(function() {
         }
     }
 	
+	$("#accordion").accordion({ header: "h4" });
+	
 	$(window).resize(function() {
 		if (map) {
 			google.maps.event.trigger(map, 'resize');
@@ -164,6 +166,33 @@ $(document).ready(function() {
 				circle = new google.maps.Circle({radius: 1000, center: point.location});
 				// map.fitBounds(circle.getBounds());
 				circle.setMap(map);
+				
+				var id = text.replace(/ /g,'');
+				
+				$('#no-searches').addClass('hide');					
+				$('#searches').append('<li id="li_' + id + '"><a id="' + id +'" href="#">' + text + '</a><a id="rm_' + id +  '" href="#" class="ui-icon ui-icon-trash right"></li>');
+				$('#searches').resize();
+				
+				
+				
+				$('#' + id).click(function() {
+					//alert('You clicked ' + text);
+					if (circle) {
+						circle.setMap(null);
+						circle = null;
+					}
+					circle = new google.maps.Circle({radius: 1000, center: point.location});
+					circle.setMap(map);
+				});
+				
+				$('#rm_' + id).click(function() {
+					if (circle) {
+						circle.setMap(null);
+						circle = null;
+					}
+					
+					$('#li_' + id).remove();
+				})
 			}
 			else
 			{
@@ -173,32 +202,4 @@ $(document).ready(function() {
 		});
 	}
 	
-	$('#submit_query').bind("click", function(event, ui) {
-		var text = $('#start_address').val();
-		
-		if (text.length > 0) {
-			console.log('Geocoding ' + text);
-			$('#loading').addClass('overlay');
-			geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
-				if (status == google.maps.GeocoderStatus.OK) {
-					var point = results[0].geometry;
-					console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
-
-					if (circle) {
-						circle.setMap(null);
-						circle = null;
-					}
-					 
-					circle = new google.maps.Circle({radius: 1000, center: point.location});
-					// map.fitBounds(circle.getBounds());
-					circle.setMap(map);
-				}
-				else
-				{
-					console.log("Geocode was not successful for the following reason: " + status);
-				}
-				$('#loading').removeClass('overlay');
-			});
-		}
-	});
 });
