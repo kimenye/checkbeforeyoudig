@@ -32,3 +32,12 @@ select {
 .long_text {
   width: 300px;
 }
+#header {
+  top: 0;
+  width: 100%;
+  z-index: 10000;
+  height: 80px;
+}
+.right {
+  float: right;
+}

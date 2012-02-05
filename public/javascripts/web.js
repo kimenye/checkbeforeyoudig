@@ -2,6 +2,8 @@ $(document).ready(function() {
 	var geocoder;
 	var map;
 	var circle;
+	var infowindow = new google.maps.InfoWindow();
+	
 	var drawingManager = new google.maps.drawing.DrawingManager({
 		drawingControlOptions: {
 			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.CIRCLE]
@@ -21,6 +23,7 @@ $(document).ready(function() {
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 				drawingManager.setMap(map);
+				loadJson(map);
 			} 
 			else 
 			{
@@ -30,6 +33,53 @@ $(document).ready(function() {
 	}
 	
 	initialize();
+	
+	function loadJson(map, center) {
+		console.log("Loading the json");
+		$.ajax({
+          type: "GET",
+          url: "javascripts/zones.json",
+          cache: false,
+          dataType: "json",
+          success: function(data) {
+				onJson(data, map);
+			}
+        });
+	}
+	
+	function onJson(data,map) {
+		// debugger;
+		if (data && data.features) {
+			
+			var ft = new GeoJSON(data);
+			if (ft.length) {
+				// console.log("Number of features: " + ft.length);
+				for (var i = 0; i < ft.length; i++){
+					ft[i].setMap(map);
+					setInfoWindow(ft[i], map);
+				}
+			}
+			else
+			{
+				ft.setMap(map);
+			}
+		}
+	}
+	
+	function setInfoWindow (feature, map) {
+		google.maps.event.addListener(feature, "click", function(event) {
+			// debugger;
+			var content = "<div id='infoBox'><strong>Zone Properties</strong><br />";
+			for (var j in this.geojsonProperties) {
+				content += j + ": " + this.geojsonProperties[j] + "<br />";
+			}
+			content += "</div>";
+			infowindow.setContent(content);
+			infowindow.position = event.latLng;
+			infowindow.open(map);
+		});
+	}
+	
 	
 	$(window).resize(function() {
 		if (map) {
@@ -48,13 +98,7 @@ $(document).ready(function() {
 					var point = results[0].geometry;
 					// debugger;
 					console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
-					// console.log()
-					// var topRight = point.viewport.getNorthEast();
-					// var bottomLeft = point.viewport.getSouthWest();
-					// var distance = topRight.distanceFrom(bottomLeft) * 1000;
-					// 
-					// console.log("Distance : " + distance);
-					
+
 					if (circle) {
 						circle.setMap(null);
 						circle = null;
