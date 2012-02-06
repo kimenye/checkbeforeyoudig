@@ -146,6 +146,34 @@ $(document).ready(function() {
 		});
 		pipesLayer.setMap(map);
 		
+		var pipeSQL = 'select OBJECTID, DIAMETER,Material,PLength from ' + PIPES_TABLE + ' where ' + where;
+		$.ajax({
+			type: "GET",
+			url: "http://ft2json.appspot.com/q?sql=" + pipeSQL,
+			dataType: "json",
+			success: function(data) {
+				$('#affected_pipes').html(data.count + " Pipes Affected");
+				if (data.data) {
+					var dt = data.data;
+					var html = '<table id="table_pipes"><thead><th>Id</th><th>Material</th><th>Length</th></thead><tbody>';
+					for(var idx=0;idx<data.data.length;idx++) {
+						html += '<tr><td>' + dt[idx].OBJECTID + '</td>' + '<td>' + dt[idx].Material + '</td><td>' + Math.round(dt[idx].PLength) + '</td></tr>';
+					}
+					html += '</tbody></html>';
+					$('#pipes').html(html);
+					$('#table_pipes').dataTable({
+					        "bPaginate": false,
+					        "bLengthChange": false,
+					        "bFilter": false,
+					        "bSort": false,
+					        "bInfo": false,
+					        "bAutoWidth": false
+					    });
+					// $('#searches').resize();
+				}
+			}
+		});
+		
 		zonesLayer = new google.maps.FusionTablesLayer({
 			query: {
 				select: 'geometry',
@@ -153,6 +181,35 @@ $(document).ready(function() {
 				from: ZONES_TABLE
 			}
 		});
+		
+		var zoneSQL = 'select Main_Area,Book_Name,Id from ' + ZONES_TABLE + ' where ' + where;
+		$.ajax({
+			type: "GET",
+			url: "http://ft2json.appspot.com/q?sql=" + zoneSQL,
+			dataType: "json",
+			success: function(data) {
+				$('#affected_zones').html(data.count + " Zones Affected");
+				if (data.data) {
+					var dt = data.data;
+					var html = '<table id="table_zones"><thead><th>Id</th><th>Area</th></thead><tbody>';
+					for(var idx=0;idx<data.data.length;idx++) {
+						html += '<tr><td>' + dt[idx].Id + '</td>' + '<td>' + dt[idx].Main_Area + '</td></tr>';
+					}
+					html += '</tbody></html>';
+					$('#zones').html(html);
+					$('#table_zones').dataTable({
+					        "bPaginate": false,
+					        "bLengthChange": false,
+					        "bFilter": false,
+					        "bSort": false,
+					        "bInfo": false,
+					        "bAutoWidth": false
+					    });
+					$('#searches').resize();
+				}
+			}
+		});
+		
 		zonesLayer.setMap(map);
 	}
 	
@@ -237,12 +294,9 @@ $(document).ready(function() {
 		$('#li_result').remove();
 	}
 	
-	/**
-	 * Clear the search and results
-	 */
-	// function clearSearch() {
-	// 		reset();
-	// 		
-	// 	}
+	function test() {
+		$('#txt_where').val('Changamwe');
+	}
+	// test();
 	
 });
