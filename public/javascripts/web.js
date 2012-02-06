@@ -1,8 +1,17 @@
+function Selection(id) {
+	
+}
+
+
 $(document).ready(function() {
 	var geocoder;
 	var map;
 	var circle, rectangle;
+	var zonesLayer, pipeLayer;
 	var infowindow = new google.maps.InfoWindow();
+	var PIPES_TABLE = 2852415;
+	var TEST_GEO = 2852795;
+	var ZONES_TABLE = 2852009;
 	
 	var selections;
 	
@@ -36,6 +45,7 @@ $(document).ready(function() {
 				drawingManager.setMap(map);
 				//loadJson(map);
 				loadFusionTable(map);
+				//search($('#txt_where').val());
 			} 
 			else 
 			{
@@ -47,10 +57,10 @@ $(document).ready(function() {
 	initialize();
 	
 	function loadFusionTable(map) {
-		var layer = new google.maps.FusionTablesLayer(2852009, {
+		zonesLayer = new google.maps.FusionTablesLayer(ZONES_TABLE, {
 			suppressInfoWindows: true
 		});
-		layer.setMap(map);
+		zonesLayer.setMap(map);
 	}
 	
 	function loadJson(map, center) {
@@ -145,7 +155,13 @@ $(document).ready(function() {
 	$("#accordion").accordion({ header: "h4" });
 	$("#header").css({ opacity: 0.9 });
 	$("#sidebar").css({ opacity: 0.7 });
-	$("#btn_submit").button( { disabled: true });
+	$("#btn_submit").button( { disabled: false });
+	$('#btn_submit').click(function(event) {
+		var text = $('#txt_where').val();
+		if (text) {
+			search(text);
+		}
+	});
 	
 	$(window).resize(function() {
 		if (map) {
@@ -155,25 +171,38 @@ $(document).ready(function() {
 	
 	$("#txt_where").keypress(function(event) {
 		if ( event.which == 13 ) {
-			$('#loading').addClass('overlay');
 			search($('#txt_where').val());
 		}
 	});
+	
+	function loadPipes(map,bounds) {
+// /		debugger;
+		//where ST_INTERSECTS(geometry, RECTANGLE(LATLNG(49.289, -123.144), LATLNG(49.292, -123.138)))
+		
+		var where = 'ST_INTERSECTS(geometry, RECTANGLE(LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'), LATLNG(' + bounds.getSouthWest().lat() +',' +  bounds.getSouthWest().lng() +')))';
+		console.log(where);
+		
+		var c = 'ST_INTERSECTS(geometry, CIRCLE(LATLNG(' + bounds.getCenter().lat() + ',' + bounds.getCenter().lng() +'),1)';
+		console.log(c);
+		
+		circle = new google.maps.Circle({center: bounds.getCenter(), map: map, radius: 1000});
+		
+		var pipes = new google.maps.FusionTablesLayer({
+			query: {
+				select: 'geometry',
+				where: c,
+				from: PIPES_TABLE
+			}
+		});
+		pipes.setMap(map);
+	}
 	
 	function search(text) {
 		geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
 			if (status == google.maps.GeocoderStatus.OK) {
 				var point = results[0].geometry;
-				//debugger;
+				
 				console.log("Pos: " + point.location.lat() + "," + point.location.lng());
-
-				// if (circle) {
-				// 					circle.setMap(null);
-				// 					circle = null;
-				// 				}
-				// 				 
-				// 				circle = new google.maps.Circle({radius: 1000, center: point.location});
-				// 				circle.setMap(map);
 				
 				if (rectangle) {
 					rectangle.setMap(null);
@@ -189,18 +218,19 @@ $(document).ready(function() {
 				$('#no-searches').addClass('hide');					
 				$('#searches').append('<li id="li_' + id + '"><a id="' + id +'" href="#">' + text + '</a><a id="rm_' + id +  '" href="#" class="ui-icon ui-icon-trash right"></li>');
 				$('#searches').resize();
-				
-				
-				
-				$('#' + id).click(function() {
-					if (rectangle) {
-						rectangle.setMap(null);
-						rectangle = null;
-					}
-					rectangle = new google.maps.Rectangle({ bounds: point.viewport });
-					rectangle.setMap(map);
-					map.fitBounds(point.viewport);
-				});
+				$('#txt_where').attr('disabled','disabled');
+				$('#btn_submit').button( "option", "disabled", true );
+				loadPipes(map, point.viewport);
+
+				// $('#' + id).click(function() {
+				// 					if (rectangle) {
+				// 						rectangle.setMap(null);
+				// 						rectangle = null;
+				// 					}
+				// 					rectangle = new google.maps.Rectangle({ bounds: point.viewport });
+				// 					rectangle.setMap(map);
+				// 					map.fitBounds(point.viewport);
+				// 				});
 				
 				$('#rm_' + id).click(function() {
 					if (rectangle) {
@@ -210,12 +240,14 @@ $(document).ready(function() {
 					
 					$('#li_' + id).remove();
 				});
+				
+				
 			}
 			else
 			{
 				console.log("Geocode was not successful for the following reason: " + status);
 			}
-			$('#loading').removeClass('overlay');
+			// $('#loading').removeClass('overlay');
 		});
 	}
 	

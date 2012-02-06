@@ -34,6 +34,10 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 
+app.get('/test', function(req, res){
+  res.render('test', { title: 'Dial Before You Dig :: test', layout: 'layout' })
+});
+
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
   console.log("Listening on " + port);

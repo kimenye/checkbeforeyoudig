@@ -39,7 +39,17 @@ select {
   width: 75%;
   min-width: 760px;
   position: fixed;
+}
+#header,
+.test {
   background: url("/images/cubes.png") repeat scroll 0 0 #fff;
+}
+.test {
+  height: 100%;
+  width: 100%;
+}
+.inner {
+  padding: 10px;
 }
 #sidebar {
   left: 5px;
@@ -100,7 +110,7 @@ select {
 .search {
   height: 300px;
 }
-li {
+.searches li {
   list-style: none;
   padding: 5px;
 }
@@ -110,4 +120,8 @@ li {
 }
 .item {
   border: 1px solid #000;
+}
+#mapimage {
+  height: 300px;
+  width: 300px;
 }
