@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	var geocoder;
 	var map;
-	var circle;
+	var circle, rectangle;
 	var infowindow = new google.maps.InfoWindow();
 	
 	var drawingManager = new google.maps.drawing.DrawingManager({
@@ -32,7 +32,8 @@ $(document).ready(function() {
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 				drawingManager.setMap(map);
-				loadJson(map);
+				//loadJson(map);
+				loadFusionTable(map);
 			} 
 			else 
 			{
@@ -42,6 +43,13 @@ $(document).ready(function() {
 	}
 	
 	initialize();
+	
+	function loadFusionTable(map) {
+		var layer = new google.maps.FusionTablesLayer(2852009, {
+			suppressInfoWindows: true
+		});
+		layer.setMap(map);
+	}
 	
 	function loadJson(map, center) {
 		console.log("Loading the json");
@@ -74,12 +82,7 @@ $(document).ready(function() {
 				bd.union(ft.getBounds());
 			}
 			map.fitBounds(bd);
-			// map.setZoom(map.getBoundsZoomLevel(bd));
 			map.setCenter(bd.getCenter());
-			// console.log("Max zoom " + map.zoom);
-			// var zoom = getZoomForBounds(bd);
-			// map.setZoom(zoom);
-			// console.log("Set zoom for bounds " + zoom);
 		}
 	}
 	
@@ -138,6 +141,8 @@ $(document).ready(function() {
     }
 	
 	$("#accordion").accordion({ header: "h4" });
+	$("#header").css({ opacity: 0.7 });
+	$("#sidebar").css({ opacity: 0.7 });
 	
 	$(window).resize(function() {
 		if (map) {
@@ -156,16 +161,25 @@ $(document).ready(function() {
 		geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
 			if (status == google.maps.GeocoderStatus.OK) {
 				var point = results[0].geometry;
-				console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
+				//debugger;
+				console.log("Pos: " + point.location.lat() + "," + point.location.lng());
 
-				if (circle) {
-					circle.setMap(null);
-					circle = null;
+				// if (circle) {
+				// 					circle.setMap(null);
+				// 					circle = null;
+				// 				}
+				// 				 
+				// 				circle = new google.maps.Circle({radius: 1000, center: point.location});
+				// 				circle.setMap(map);
+				
+				if (rectangle) {
+					rectangle.setMap(null);
+					rectangle = null;
 				}
-				 
-				circle = new google.maps.Circle({radius: 1000, center: point.location});
-				// map.fitBounds(circle.getBounds());
-				circle.setMap(map);
+				
+				rectangle = new google.maps.Rectangle({ bounds: point.viewport });
+				rectangle.setMap(map);
+				map.fitBounds(point.viewport);
 				
 				var id = text.replace(/ /g,'');
 				
@@ -175,24 +189,23 @@ $(document).ready(function() {
 				
 				
 				
-				$('#' + id).click(function() {
-					//alert('You clicked ' + text);
-					if (circle) {
-						circle.setMap(null);
-						circle = null;
-					}
-					circle = new google.maps.Circle({radius: 1000, center: point.location});
-					circle.setMap(map);
-				});
-				
-				$('#rm_' + id).click(function() {
-					if (circle) {
-						circle.setMap(null);
-						circle = null;
-					}
-					
-					$('#li_' + id).remove();
-				})
+				// $('#' + id).click(function() {
+				// 					if (circle) {
+				// 						circle.setMap(null);
+				// 						circle = null;
+				// 					}
+				// 					circle = new google.maps.Circle({radius: 1000, center: point.location});
+				// 					circle.setMap(map);
+				// 				});
+				// 				
+				// 				$('#rm_' + id).click(function() {
+				// 					if (circle) {
+				// 						circle.setMap(null);
+				// 						circle = null;
+				// 					}
+				// 					
+				// 					$('#li_' + id).remove();
+				// 				});
 			}
 			else
 			{
