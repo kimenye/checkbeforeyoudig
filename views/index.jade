@@ -10,13 +10,15 @@
 		select#sel_type(name: "sel_type")
 			option(value='excavation') Excavation
 			option(value='overhead-repairs') Overhead Repairs
-	#button_holder.holder
+	#button_holder.holder.left
 		a#btn_submit.link_button(href='#') Search
-#sidebar.light.shadow.rounded
+	#button_hoder.holder
+		a#btn_clear.link_button(href='#') Clear
+#sidebar.light.shadow.rounded.hide
 	#accordion
-		.searches
+		.results
 			h4 
-				a(href='#') My Searches
+				a(href='#') My Results
 			.search
 				ul#searches.searches
 					li#no-searches
@@ -25,6 +27,13 @@
 						a(href='#')
 							span Changamwe
 						a.ui-icon.ui-icon-trash.right(href='#')
-		.results
-			h4
-				a(href='#') My Results
+				#result_tabs
+					ul
+						li
+							a(href="#tab-pipes") Pipes
+						li
+							a(href="#tab-zones") Zones
+					#tab-pipes
+						h5 Affected Pipes
+					#tab-zones
+						h5 Affected Zones
