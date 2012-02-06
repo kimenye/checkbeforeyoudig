@@ -72,6 +72,7 @@ $(document).ready(function() {
 	
 	function initUI() {
 		$('#result_tabs').tabs();
+		// $('#help_tabs').tabs();
 		$("#accordion").accordion({ header: "h4" });
 		$("#header").css({ opacity: 0.9 });
 		$("#sidebar").css({ opacity: 0.7 });
@@ -99,6 +100,25 @@ $(document).ready(function() {
 				if (text)
 					search(text);
 			}
+		});
+		
+		
+		// Dialog			
+		$('#dialog').dialog({
+			autoOpen: false,
+			width: 600,
+			modal: true,
+			buttons: {
+				"Ok": function() { 
+					$(this).dialog("close"); 
+				} 
+			}
+		});
+
+		// Dialog Link
+		$('#btn_help').click(function(){
+			$('#dialog').dialog('open');
+			return false;
 		});
 	}
 	
@@ -205,7 +225,7 @@ $(document).ready(function() {
 					        "bInfo": false,
 					        "bAutoWidth": false
 					    });
-					$('#searches').resize();
+					// $('#searches').resize();
 				}
 			}
 		});
@@ -271,7 +291,7 @@ $(document).ready(function() {
 		invalidate(drawingManager, true);
 		
 		$('#no-searches').addClass('hide');					
-		$('#searches').resize();
+		// $('#searches').resize();
 		$('#txt_where').attr('disabled','disabled');
 		$('#btn_submit').button( "option", "disabled", true );
 		$('#btn_clear').button( "option", "disabled", false );
@@ -296,7 +316,8 @@ $(document).ready(function() {
 	
 	function test() {
 		$('#txt_where').val('Changamwe');
+		//$('#dialog').dialog('open');
 	}
-	// test();
+	//test();
 	
 });

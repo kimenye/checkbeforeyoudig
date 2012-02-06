@@ -35,7 +35,7 @@ select {
 #header {
   top: 5px;
   left: 5px;
-  height: 100px;
+  height: 40px;
   width: 75%;
   min-width: 760px;
   position: fixed;
@@ -57,9 +57,12 @@ select {
   width: 300px;
   min-height: 400px;
   height: 75%;
-  top: 105px;
+  top: 45px;
   padding: 5px;
   background: url("/images/cubes.png") repeat scroll 0 0 #fff;
+}
+.results {
+  min-height: 400px;
 }
 #header p {
   padding: 0px 5px 0 5px;
@@ -109,7 +112,7 @@ select {
   display: block;
 }
 .search {
-  height: 300px;
+  height: 450px;
 }
 .searches li {
   list-style: none;
@@ -125,4 +128,10 @@ select {
 #mapimage {
   height: 300px;
   width: 300px;
+}
+#help {
+  padding-top: 10px;
+}
+#help img {
+  width: 500px;
 }

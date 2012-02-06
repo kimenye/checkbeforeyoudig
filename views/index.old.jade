@@ -1,38 +1,41 @@
-.container_12
-	#header.grid_12
-	#map_canvas.map
-	.toolbox.rounded
-		fieldset
-			legend Work Criteria
-			p Enter the criteria for the work intended to be completed (e.g. Ziwani) or use the toolbar on the top left to draw your area with the mouse.
-			label(for="start_address") Where
-			input#start_address.long_text(type="text", name="start_address")
-			br
-			br
-			label(for="type_of_work") Type of Work
-			select#type_of_work(name: "flight_type")
-				option(value='excavation') Excavation
-				option(value='overhead-repairs') Overhead Repairs
-			br
-			br
-			input#submit_query(type="button", value="Submit")
-#loading
-
-
--#map_canvas.map.right
--.toolbox.rounded
--       fieldset
--               legend Work Criteria
--               p Enter the criteria for the work intended to be completed (e.g. Ziwani) or use the toolbar on the top left to draw your area with the mouse.
--               label(for="start_address") Where
--               input#start_address.long_text(type="text", name="start_address")
--               br
--               br
--               label(for="type_of_work") Type of Work
--               select#type_of_work(name: "flight_type")
--                       option(value='excavation') Excavation
--                       option(value='overhead-repairs') Overhead Repairs
--               br
--               br
--               input#submit_query(type="button", value="Submit")
--#loading
+#map_canvas.map
+#header.light.shadow.rounded
+	p "Check before you dig" is a service that allows public infrastructure contractors to know what underground assets (e.g. water and gas pipes) or overhead assets (e.g. electricity and communication cables) may be affected by their work. Enter the location you would like to search, or use the drawing tools on the right to select the area to search.
+	.clear
+	#where_holder.holder.left
+		label.strong(for='txt_where') Where
+		input#txt_where(name='txt_where', placeholder='e.g. Changamwe', value='')
+	#type_holder.holder.left
+		label.strong(for='sel_type') Type of Work
+		select#sel_type(name: "sel_type")
+			option(value='excavation') Excavation
+			option(value='overhead-repairs') Overhead Repairs
+	#button_holder.holder.left
+		a#btn_submit.link_button(href='#') Search
+	#button_hoder.holder
+		a#btn_clear.link_button(href='#') Clear
+#sidebar.light.shadow.rounded.hide
+	#accordion
+		.results
+			h4 
+				a(href='#') My Results
+			.search
+				ul#searches.searches
+					li#no-searches
+						span No Searches
+					li.hide
+						a(href='#')
+							span Changamwe
+						a.ui-icon.ui-icon-trash.right(href='#')
+				#result_tabs
+					ul
+						li
+							a(href="#tab-pipes") Affected Assets
+						li
+							a(href="#tab-zones") Zones
+					#tab-pipes
+						h5#affected_pipes
+						#pipes 
+					#tab-zones
+						h5#affected_zones
+						#zones
