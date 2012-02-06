@@ -44,7 +44,7 @@ $(document).ready(function() {
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 				drawingManager.setMap(map);
 				//loadJson(map);
-				loadFusionTable(map);
+				//loadFusionTable(map);
 				//search($('#txt_where').val());
 			} 
 			else 
@@ -179,18 +179,21 @@ $(document).ready(function() {
 // /		debugger;
 		//where ST_INTERSECTS(geometry, RECTANGLE(LATLNG(49.289, -123.144), LATLNG(49.292, -123.138)))
 		
-		var where = 'ST_INTERSECTS(geometry, RECTANGLE(LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'), LATLNG(' + bounds.getSouthWest().lat() +',' +  bounds.getSouthWest().lng() +')))';
-		console.log(where);
+		// var where = 'ST_INTERSECTS(geometry, RECTANGLE(LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'), LATLNG(' + bounds.getSouthWest().lat() +',' +  bounds.getSouthWest().lng() +')))';
+		// 		console.log(where);
+		// 		
+		// 		var c = 'ST_INTERSECTS(geometry, CIRCLE(LATLNG(' + bounds.getCenter().lat() + ',' + bounds.getCenter().lng() +'),1)';
+		// 		console.log(c);
 		
-		var c = 'ST_INTERSECTS(geometry, CIRCLE(LATLNG(' + bounds.getCenter().lat() + ',' + bounds.getCenter().lng() +'),1)';
-		console.log(c);
+		var rect = 'RECTANGLE(LATLNG(' + bounds.getSouthWest().lat() + ',' + bounds.getSouthWest().lng() +'), LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'))';
+		var where = 'ST_INTERSECTS(geometry,' + rect + ')';
 		
-		circle = new google.maps.Circle({center: bounds.getCenter(), map: map, radius: 1000});
+		//circle = new google.maps.Circle({center: bounds.getCenter(), map: map, radius: 1000});
 		
 		var pipes = new google.maps.FusionTablesLayer({
 			query: {
 				select: 'geometry',
-				where: c,
+				where: where,
 				from: PIPES_TABLE
 			}
 		});
