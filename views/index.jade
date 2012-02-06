@@ -5,6 +5,13 @@
 	#where_holder.holder.left
 		label.strong(for='txt_where') Where
 		input#txt_where(name='txt_where', placeholder='e.g. Changamwe')
+	#type_holder.holder.left
+		label.strong(for='sel_type') Type of Work
+		select#sel_type(name: "sel_type")
+			option(value='excavation') Excavation
+			option(value='overhead-repairs') Overhead Repairs
+	#button_holder.holder
+		a#btn_submit.link_button(href='#') Search
 #sidebar.light.shadow.rounded
 	#accordion
 		.searches

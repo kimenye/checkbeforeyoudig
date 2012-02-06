@@ -82,7 +82,8 @@ select {
   padding: 5px;
   margin: 0 0 0 5px;
 }
-input {
+input,
+select {
   background: none repeat scroll 0 0 #fff;
   border: medium none;
   border-radius: 5px 5px 5px 5px;

@@ -4,6 +4,8 @@ $(document).ready(function() {
 	var circle, rectangle;
 	var infowindow = new google.maps.InfoWindow();
 	
+	var selections;
+	
 	var drawingManager = new google.maps.drawing.DrawingManager({
 		drawingControlOptions: {
 			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE, google.maps.drawing.OverlayType.CIRCLE],
@@ -141,8 +143,9 @@ $(document).ready(function() {
     }
 	
 	$("#accordion").accordion({ header: "h4" });
-	$("#header").css({ opacity: 0.7 });
+	$("#header").css({ opacity: 0.9 });
 	$("#sidebar").css({ opacity: 0.7 });
+	$("#btn_submit").button( { disabled: true });
 	
 	$(window).resize(function() {
 		if (map) {
@@ -189,23 +192,24 @@ $(document).ready(function() {
 				
 				
 				
-				// $('#' + id).click(function() {
-				// 					if (circle) {
-				// 						circle.setMap(null);
-				// 						circle = null;
-				// 					}
-				// 					circle = new google.maps.Circle({radius: 1000, center: point.location});
-				// 					circle.setMap(map);
-				// 				});
-				// 				
-				// 				$('#rm_' + id).click(function() {
-				// 					if (circle) {
-				// 						circle.setMap(null);
-				// 						circle = null;
-				// 					}
-				// 					
-				// 					$('#li_' + id).remove();
-				// 				});
+				$('#' + id).click(function() {
+					if (rectangle) {
+						rectangle.setMap(null);
+						rectangle = null;
+					}
+					rectangle = new google.maps.Rectangle({ bounds: point.viewport });
+					rectangle.setMap(map);
+					map.fitBounds(point.viewport);
+				});
+				
+				$('#rm_' + id).click(function() {
+					if (rectangle) {
+						rectangle.setMap(null);
+						rectangle = null;
+					}
+					
+					$('#li_' + id).remove();
+				});
 			}
 			else
 			{
