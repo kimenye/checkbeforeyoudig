@@ -18,7 +18,7 @@ $(document).ready(function() {
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
 				var myOptions = {
-					zoom: 13,
+					zoom: 12,
 					center: results[0].geometry.location,
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
 					panControlOptions: {
