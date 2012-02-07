@@ -242,12 +242,16 @@ $(document).ready(function() {
 		
 		$('#sidebar').removeClass('hide');
 		var id = text.replace(/ /g,'');
-		$('#searches').append('<li id="li_result"><a href="#">' + text + '</a><a id="rm_result" href="#" class="ui-icon ui-icon-trash right"></li>');
+		$('#searches').append('<li id="li_result"><a id="pan_result" href="#">' + text + '</a><a id="rm_result" href="#" class="ui-icon ui-icon-trash right"></li>');
 
 
 		$('#rm_result').click(function() {
 			// clearSearch(id);
 			reset();
+		});
+		
+		$('#pan_result').click(function() {
+			map.fitBounds(bounds);
 		});
 	}
 	
@@ -259,7 +263,7 @@ $(document).ready(function() {
 		geocoder.geocode( { 'address' : text + ', Mombasa'}, function(results,status) {
 			if (status == google.maps.GeocoderStatus.OK) {
 				var point = results[0].geometry;
-				
+				console.log("Num results " + results.length);
 				console.log("Pos: " + point.location.lat() + "," + point.location.lng());
 				
 				invalidate(rectangle);	
