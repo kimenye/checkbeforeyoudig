@@ -1,7 +1,9 @@
 $(document).ready(function() {
 	var geocoder, map, circle, rectangle;
+	var startingPosition;
 	var zonesLayer, pipesLayer;
 
+	var INITIAL_ZOOM = 12;
 	var PIPES_TABLE = 2852415;
 	var TEST_GEO = 2852795;
 	var ZONES_TABLE = 2852009;
@@ -48,7 +50,7 @@ $(document).ready(function() {
 			if (status == google.maps.GeocoderStatus.OK) {
 				console.log("Pos: " + results[0].geometry.location.lat() + "," + results[0].geometry.location.lng());
 				var myOptions = {
-					zoom: 12,
+					zoom: INITIAL_ZOOM,
 					center: results[0].geometry.location,
 					mapTypeId: google.maps.MapTypeId.ROADMAP,
 					panControlOptions: {
@@ -62,6 +64,7 @@ $(document).ready(function() {
 				};
 				map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 				drawingManager.setMap(map);
+				startingPosition = results[0].geometry;
 			} 
 			else 
 			{
@@ -312,6 +315,7 @@ $(document).ready(function() {
 		$('#btn_clear').button( "option", "disabled", true );
 		$('#sidebar').addClass('hide');
 		$('#li_result').remove();
+		map.fitBounds(startingPosition.viewport);
 	}
 	
 	function test() {
