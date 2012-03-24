@@ -1,7 +1,8 @@
 How to create a node.js & express app
-======================================
+=====================================
 - Create the folder in which you want the app to run
 - Run [express -t jade --sessions -c stylus] That uses jade as the template engine, stylus for css and has session support.
 - Run [npm install -d] Installs the required dependancies
 - Test whether the app runs with [node app.js]
+
 
