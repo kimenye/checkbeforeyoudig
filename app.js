@@ -8,6 +8,10 @@ var express = require('express')
 
 var app = module.exports = express.createServer();
 
+// Data provider
+var DataProvider = require('./dataprovider').DataProvider;
+var data = new DataProvider();
+
 // Configuration
 
 app.configure(function(){
@@ -37,6 +41,7 @@ app.get('/', routes.index);
 app.get('/test', function(req, res){
   res.render('test', { title: 'Dial Before You Dig :: test', layout: 'layout' })
 });
+
 
 var port = process.env.PORT || 3000;
 app.listen(port, function() {
