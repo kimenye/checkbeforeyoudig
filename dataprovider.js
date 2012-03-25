@@ -24,10 +24,10 @@ DataProvider=function() {};
  * Find an user by providing their email address
  */
 DataProvider.prototype.findUserByEmail = function(callback, email) {
-	User.findOne({ email: email }, function(error, callback) {
+	User.findOne({ emailAddress: email }, function(error, callback) {
 		if (error) callback(error)
 		else {
-			callback(user)
+			callback(user);
 		}
 	});
 };
