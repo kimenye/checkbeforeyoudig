@@ -46,7 +46,7 @@ DataProvider.prototype.createUser = function(callback, email, occupation) {
 };
 
 /**
- * Create a user
+ * Update a user
  */
 DataProvider.prototype.updateUser = function(callback, email, registrationDate, activated) {
 	
