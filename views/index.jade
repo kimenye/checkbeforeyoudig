@@ -4,9 +4,53 @@
 			a.brand(href="#") Check Before You Dig &reg;
 .container
 	.row-fluid
-		.span-9
-			.hero-unit
-				h1 Check Before You Dig
+		img(src="images/banner.png")
+	.row-fluid
+		.hero-unit
+			.row
+				h2 Check Before You Dig
+					small &nbsp;Free Information on underground pipes
+			.row
+				.span6
+					ul#tabs.nav.nav-tabs
+						li.active
+							a(data-toggle="tab", href="#register") Register
+						li
+							a(data-toggle="tab", href="#login") Login
+					.tab-content
+						div#register.tab-pane.active
+							form.form-horizontal
+								fieldset
+									legend Enter your details to register
+								.control-group
+									label.control-label(for="emailAddress") Email Address
+									.controls
+										input#emailAddress.input-xlarge(type="email", name="emailAddress")
+								.control-group
+									label.control-label(for="occupation") Occupation
+									.controls
+										select#occupation
+											option(value="Architect, Draftsman") Architect, Draftsman
+											option(value="Builder") Builder
+											option(value="Other") Other
+								.form-actions
+									button.btn.btn-primary(type="submit", value="Register") Register
+						div#login.tab-pane
+							form.form-horizontal
+								fieldset
+									legend Enter your email address and password to login
+									.control-group
+										label.control-label(for="emailAddress") Email Address
+										.controls
+											input#emailAddress.input-xlarge(type="email", name="emailAddress")
+									.control-group
+										label.control-label(for="password") Password
+										.controls
+											input#password(type="password", name="password")
+									.form-actions
+										button.btn.btn-primary(type="submit", value="Login") Login
+				
+	!=partial('footer')
 script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
 script(type='text/javascript', src='http://maps.google.com/maps/api/js?sensor=false')
 script(type='text/javascript', src='javascripts/bootstrap.min.js')
