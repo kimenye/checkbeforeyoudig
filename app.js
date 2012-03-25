@@ -5,6 +5,8 @@
 
 var express = require('express')
   , routes = require('./routes')
+  , auth = require('everyauth')
+
 
 var app = module.exports = express.createServer();
 
@@ -38,10 +40,30 @@ app.configure('production', function(){
 
 app.get('/', routes.index);
 
+app.get('/home', function(req, res) {
+	res.render('home', { title: 'Dial Before You Dig :: test', layout: 'layout' })
+});
+
 app.get('/test', function(req, res){
   res.render('test', { title: 'Dial Before You Dig :: test', layout: 'layout' })
 });
 
+/**
+ * This gets called when you post the register form
+ */
+app.post('/register', function(req, res) {
+	var emailAddress = req.param('emailAddress');
+	console.log('Email Address is ' + emailAddress);
+	
+	//create a user
+	
+	//generate an access token
+	
+	//Email the user to activate their registration
+	
+	//Redirect the user to the thank you page
+	res.render('registered', {title: 'Thank you for your registration' });
+});
 
 var port = process.env.PORT || 3000;
 app.listen(port, function() {

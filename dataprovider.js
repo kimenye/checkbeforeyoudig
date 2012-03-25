@@ -37,7 +37,7 @@ DataProvider = function() {
 DataProvider.prototype.findUserByEmail = function(callback, email) {
 	User.findOne({
 		emailAddress : email
-	}, function(error, callback) {
+	}, function(error, user) {
 		if(error)
 			callback(error)
 		else {

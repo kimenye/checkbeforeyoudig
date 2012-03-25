@@ -11,12 +11,13 @@ function testCreateUser() {
 
 function testFindUserByEmail() {
 	data.findUserByEmail(function(user) {
-		var expectedEmail = "trevor@kimenye.com";
-		if (user.emailAddress === expectedEmail) {
-			console.log("User found");
-		} else {
-			console.log("User not found");
-		}
+		// var expectedEmail = "trevor@kimenye.com";
+		// 		if (user.emailAddress === expectedEmail) {
+		// 			console.log("User found");
+		// 		} else {
+		// 			console.log("User not found");
+		// 		}
+		console.log(user);
 	}, "trevor@kimenye.com");
 }
 

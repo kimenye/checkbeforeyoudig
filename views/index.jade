@@ -19,7 +19,7 @@
 							a(data-toggle="tab", href="#login") Login
 					.tab-content
 						div#register.tab-pane.active
-							form.form-horizontal
+							form.form-horizontal(method="POST", action="/register")
 								fieldset
 									legend Enter your details to register
 								.control-group
