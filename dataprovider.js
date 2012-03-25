@@ -45,4 +45,17 @@ DataProvider.prototype.createUser = function(callback, email, occupation) {
 	callback(user);
 };
 
+/**
+ * Create a user
+ */
+DataProvider.prototype.updateUser = function(callback, email, registrationDate, activated) {
+	
+	var user = findUserByEmail(callback, email);
+	user.registrationDate = registrationDate;
+	user.activated = activated;
+	
+	user.save();
+	callback(user);
+};
+
 exports.DataProvider = DataProvider;
