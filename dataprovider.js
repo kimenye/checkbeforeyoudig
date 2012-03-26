@@ -48,10 +48,12 @@ DataProvider.prototype.findUserByEmail = function(callback, email) {
 /**
  * Create a user
  */
-DataProvider.prototype.createUser = function(callback, email, occupation) {
+DataProvider.prototype.createUser = function(callback, email, occupation, token) {
 	var user = new User();
+	// Will add check for existing emails to prevent creation of users with the same email
 	user.emailAddress = email;
 	user.occupation = occupation;
+	user.token = token;
 	user.activated = false;
 
 	user.save();
