@@ -67,7 +67,7 @@ app.post('/register', function(req, res) {
 	var token = generateUUID();
 	function generateUUID() {
 		var d = new Date().getTime();
-		var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+		var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
 			var r = (d + Math.random() * 16) % 16 | 0;
 			d = d / 16 | 0;
 			return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
@@ -80,7 +80,7 @@ app.post('/register', function(req, res) {
 
 	data.createUser(function(user) {
 		// Send an email to the user
-		mailer.sendEmail(user.emailAddress);
+		mailer.sendEmail(user);
 		console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 	}, emailAddress, occupation, token);
 	
@@ -93,7 +93,22 @@ app.post('/register', function(req, res) {
 		title : 'Thank you for your registration'
 	});
 });
-var port = process.env.PORT || 3000;
+
+/*
+ * This gets called when a user click on the confirmation link
+ */
+app.get('/confirm', function(req, res) {
+	var token = req.param('token')
+	console.log("Confirmation token is " + token);
+	
+	// Redirect the user to the password-set/confirm page
+	res.render('confirm', {
+		title : 'Set your Password'
+	});
+	
+});
+
+var port = process.env.PORT || 4000;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });

@@ -1,42 +1,31 @@
-// Not complete - at the moment it sends to my email address (the hardcoded one)
-// but doesn't work with the passed in email parameter - will debug today
+var email = require("mailer");
 
-var nodemailer = require("nodemailer");
+var url = "http://localhost:3000/confirm?token="; // To be changed
 
-var emailAddress;
-
-var Mailer = function(emailAddress) {
-	this.emailAddress = emailAddress;
-}
-// create reusable transport method (opens pool of SMTP connections)
-var smtpTransport = nodemailer.createTransport("SMTP", {
-	service : "Gmail",
-	auth : {
-		user : "user@gmail.com",  // Was using my gmail credentials for testing
-		pass : "password"
+module.exports.sendEmail = function(user) {
+	var date = new Date();
+email.send({
+	host : "smtp.gmail.com", // smtp server hostname
+	port : "587", // for SSL support - REQUIRES NODE v0.3.x OR HIGHER
+	domain : "localhost", // domain used by client to identify itself to server
+	to : user.emailAddress,
+	from : "Sprout Consulting <noreply@sprout.co.ke>",
+	subject : "Dial Before you Dig Registration Confirmation",
+	template : "public/templates/emailTemplate.txt", // path to template
+	data : {
+		"date" : date,
+		"username" : "Jane Doe",
+		"username" : user.emailAddress,
+		"website address" : url + "user.token"
+	},
+	authentication : "login", // auth login is supported; anything else is no auth
+	username : "user@gmail.com", // username
+	password : "password"         // password
+}, function(err, result) {
+	if(err) {
+		console.log(err);
+	} else {
+		console.log(result)
 	}
 });
-
-// setup e-mail data with unicode symbols
-var mailOptions = {
-	from : "Sprout Consulting <noreply@sprout.co.ke>", // sender address
-	to : "jokhessa@yahoo.com", // list of receivers
-	subject : "Hello", // Subject line
-	text : "Hello world text", // plaintext body
-	html : "<b>Hello world html</b>" // html body
-}
-
-module.exports.sendEmail = function(emailAddress) {
-	var mailer = new Mailer(emailAddress);
-
-	// send mail with defined transport object
-	smtpTransport.sendMail(mailOptions, function(error, response) {
-		if(error) {
-			console.log(error);
-		} else {
-			console.log("Message sent: " + response.message);
-		}
-		smtpTransport.close();
-		// shut down the connection pool, no more messages
-	});
 }

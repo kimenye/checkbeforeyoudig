@@ -32,11 +32,25 @@ var User = mongoose.model('User', UserSchema);
 DataProvider = function() {
 };
 /**
- * Find an user by providing their email address
+ * Find a user by providing their email address
  */
 DataProvider.prototype.findUserByEmail = function(callback, email) {
 	User.findOne({
 		emailAddress : email
+	}, function(error, user) {
+		if(error)
+			callback(error)
+		else {
+			callback(user);
+		}
+	});
+};
+/**
+ * Find a user by providing their token id
+ */
+DataProvider.prototype.findUserByToken = function(callback, tokenId) {
+	User.findOne({
+		token : tokenId
 	}, function(error, user) {
 		if(error)
 			callback(error)
@@ -62,16 +76,16 @@ DataProvider.prototype.createUser = function(callback, email, occupation, token)
 /**
  * Update a user
  */
-DataProvider.prototype.updateUser = function(callback, email, registrationDate, activated, password) {
+DataProvider.prototype.updateUser = function(callback, token, registrationDate, password) {
 
-	this.findUserByEmail(function(user) {
+	this.findUserByToken(function(user) {
 		user.registrationDate = registrationDate;
-		user.activated = activated;
+		user.activated = true;
 		user.password = password;
 
 		user.save();
 		callback(user);
-	}, email);
+	}, token);
 };
 
 exports.DataProvider = DataProvider;
