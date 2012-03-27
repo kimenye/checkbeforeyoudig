@@ -8,8 +8,8 @@ var from = CONFIG.mail_from_address;
 module.exports.sendEmail = function(user) {
 	var date = new Date();
 	email.send({
-		host : "smtp.gmail.com", // smtp server hostname
-		port : "587", // for SSL support - REQUIRES NODE v0.3.x OR HIGHER
+		host : CONFIG.smtp_server, // smtp server hostname
+		port : CONFIG.smtp_port, // for SSL support - REQUIRES NODE v0.3.x OR HIGHER
 		domain : "localhost", // domain used by client to identify itself to server
 		to : user.emailAddress,
 		from : "Sprout Consulting <" + from + ">",
