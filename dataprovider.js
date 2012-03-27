@@ -1,7 +1,9 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema, ObjectId = Schema.ObjectId;
 
-var url = process.env.MONGOHQ_URL || 'mongodb://localhost/cbug';
+var CONFIG = require('config').Environment
+
+var url = CONFIG.database;
 mongoose.connect(url);
 
 var UserSchema = new Schema({

@@ -5,6 +5,7 @@
 var express = require('express'), routes = require('./routes'), auth = require('everyauth')
 
 var app = module.exports = express.createServer();
+var CONFIG = require('config').Environment
 
 // Data provider
 var DataProvider = require('./dataprovider').DataProvider;
@@ -13,6 +14,7 @@ var data = new DataProvider();
 var mailer = require('./utility/mailer');
 
 // Configuration
+
 
 app.configure(function() {
 	app.set('views', __dirname + '/views');
@@ -119,7 +121,7 @@ app.post('/validate', function(req, res) {
 		console.log("Passwords do not match");
 	}
 });
-var port = process.env.PORT || 3000;
+var port = CONFIG.port;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });

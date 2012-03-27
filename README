@@ -6,3 +6,8 @@ How to create a node.js & express app
 - Test whether the app runs with [node app.js]
 
 
+Configuration
+=============
+This application uses node-config (https://github.com/lorenwest/node-config) for configuration management.
+Configuration is stored in the config folder. For your local environment, create a copy of development.js.template and rename it
+as development.js. Then you can override the settings with your local settings. You local development.js file will not be version controlled [it has been added to .gitignore]
