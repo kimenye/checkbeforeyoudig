@@ -12,7 +12,6 @@ var data = new DataProvider();
 
 var mailer = require('./utility/mailer');
 
-
 // Configuration
 
 app.configure(function() {
@@ -83,35 +82,46 @@ app.post('/register', function(req, res) {
 		mailer.sendEmail(user);
 		console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 	}, emailAddress, occupation, token);
-	
-	// Will generate the email message
-
-	//Email the user to activate their registration
-
 	//Redirect the user to the thank you page
 	res.render('registered', {
 		title : 'Thank you for your registration'
 	});
 });
-
-/*
+/**
  * This gets called when a user click on the confirmation link
  */
 app.get('/confirm', function(req, res) {
 	var token = req.param('token')
 	console.log("Confirmation token is " + token);
-	
+
 	// Redirect the user to the password-set/confirm page
 	res.render('confirm', {
-		title : 'Set your Password'
+		title : 'Set your Password',
+		token : token
 	});
-	
-});
 
-var port = process.env.PORT || 4000;
+});
+/**
+ * This gets called when a user sets their password
+ */
+app.post('/validate', function(req, res) {
+	// Will implement front end validation
+	if(req.param('password') === req.param('passwordConfirm')) {
+		data.updateUser(function(req, res) {
+			console.log("Activation: " + user.activated + " regDate" + user.registrationDate);
+		}, req.param('token'), new Date(), req.param('password'));
+
+		res.render('home', {
+			title : 'Dial Before You Dig :: test',
+			layout : 'layout'
+		})
+	} else {
+		console.log("Passwords do not match");
+	}
+});
+var port = process.env.PORT || 3000;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });
 
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
-

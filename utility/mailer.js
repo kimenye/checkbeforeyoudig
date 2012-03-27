@@ -1,6 +1,7 @@
 var email = require("mailer");
 
-var url = "http://localhost:3000/confirm?token="; // To be changed
+var confirmUrl = "http://localhost:3000/confirm?token="; // To be changed
+var website = "http://dialbeforeyoudig.herokuapp.com";
 
 module.exports.sendEmail = function(user) {
 	var date = new Date();
@@ -14,18 +15,19 @@ email.send({
 	template : "public/templates/emailTemplate.txt", // path to template
 	data : {
 		"date" : date,
-		"username" : "Jane Doe",
+		"user" : "Jane Doe",
 		"username" : user.emailAddress,
-		"website address" : url + "user.token"
+		"confirm" : confirmUrl + user.token,
+		"website address" : website
 	},
 	authentication : "login", // auth login is supported; anything else is no auth
 	username : "user@gmail.com", // username
 	password : "password"         // password
 }, function(err, result) {
 	if(err) {
-		console.log(err);
+		console.log("Could not send email");
 	} else {
-		console.log(result)
+		console.log("Email sent")
 	}
 });
 }

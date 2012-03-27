@@ -1,17 +1,18 @@
 {{ date }}
-<br />
+<br /><br /><br />
 Dear {{ user }}
-<br />
+<br /><br />
 Thank you for registering with the Check Before You Dig service.
 With your Username below, you now have access to our online enquiry service.
 <br />
 Before you can lodge an enquiry you need to confirm you have received this email correctly. You can do this by clicking on the following link and confirming your account.
-Validate your email address.
-<br />
-To lodge a Check Before You Dig enquiry please visit our online service at {{ website address }}
+<br /><br />
+<a href="{{ confirm }}">Validate your email address</a>
+<br /><br />
+To lodge a Check Before You Dig enquiry please visit our online service at <a href="{{ website address }}">{{ website address }}</a>
 click on the link to request plans and follow the prompts.
-<br />
+<br /><br />
 Username: {{ username }}
-<br />
+<br /><br />
 All users of this service acknowledge and agree that they have read and understood the terms and
-disclaimers on which this service is provided, which is set out at {{ website address }}
+disclaimers on which this service is provided, which is set out at <a href="{{ website address }}">{{ website address }}</a>

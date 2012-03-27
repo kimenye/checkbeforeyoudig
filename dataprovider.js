@@ -38,8 +38,9 @@ DataProvider.prototype.findUserByEmail = function(callback, email) {
 	User.findOne({
 		emailAddress : email
 	}, function(error, user) {
-		if(error)
-			callback(error)
+		if(error) {
+			callback(error);
+		}
 		else {
 			callback(user);
 		}
@@ -52,8 +53,9 @@ DataProvider.prototype.findUserByToken = function(callback, tokenId) {
 	User.findOne({
 		token : tokenId
 	}, function(error, user) {
-		if(error)
-			callback(error)
+		if(error) {
+			callback(error);
+		}
 		else {
 			callback(user);
 		}

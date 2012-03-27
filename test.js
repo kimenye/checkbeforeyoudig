@@ -29,6 +29,6 @@ function testFindUserByEmail() {
 }*/
 
 
-testCreateUser();
+//testCreateUser();
 testFindUserByEmail();
 //testUpdateUser();

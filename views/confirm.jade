@@ -1,0 +1,10 @@
+form(method="POST", action="/validate")
+	fieldset
+		legend Set your Password
+		label(for="password") Password
+			input(type="password", name="password")
+		label(for="passwordConfirm") Confirm Password
+			input(type="password", name="passwordConfirm")
+		input(type="hidden", value="#{token}")
+		button(type="submit", value="Submit") Submit
+	
