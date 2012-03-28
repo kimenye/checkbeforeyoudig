@@ -23,9 +23,9 @@
 								fieldset
 									legend Enter your details to register
 								.control-group
-									label.control-label(for="emailAddress") Email Address
+									label.control-label(for="email") Email Address
 									.controls
-										input#emailAddress.input-xlarge(type="email", name="emailAddress")
+										input#emailAddress.input-xlarge(type="email", name="email")
 								.control-group
 									label.control-label(for="occupation") Occupation
 									.controls
@@ -48,13 +48,13 @@
 								.form-actions
 									button.btn.btn-primary(type="submit", value="Register") Register
 						div#login.tab-pane
-							form.form-horizontal
+							form.form-horizontal(method="POST", action="/login")
 								fieldset
 									legend Enter your email address and password to login
 									.control-group
-										label.control-label(for="emailAddress") Email Address
+										label.control-label(for="email") Email Address
 										.controls
-											input#emailAddress.input-xlarge(type="email", name="emailAddress")
+											input#emailAddress.input-xlarge(type="email", name="email")
 									.control-group
 										label.control-label(for="password") Password
 										.controls

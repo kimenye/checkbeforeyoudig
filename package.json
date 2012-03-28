@@ -10,5 +10,6 @@
 	, "everyauth" : "0.2.32"
 	, "mailer" : "0.6.7"
 	, "config" : "0.4.11"
+	, "jasmine-node" : "1.0.22"
   }
 }

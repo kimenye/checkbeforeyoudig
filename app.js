@@ -7,10 +7,10 @@
  * Module dependencies.
  */
 
-var express = require('express'), routes = require('./routes'), everyauth = require('everyauth')
+var express = require('express'), routes = require('./routes'), everyauth = require('everyauth'), jasmine = require('jasmine-node');
 
 var app = module.exports = express.createServer();
-var CONFIG = require('config').Environment
+var CONFIG = require('config').Environment;
 
 // Data provider
 var DataProvider = require('./dataprovider').DataProvider;
@@ -22,15 +22,26 @@ var mailer = require('./utility/mailer');
 
 everyauth
   .password
+  	everyauth.password.extractExtraRegistrationParams( function (req) {
+  return {
+      occupation: req.body.occupation
+  };
+})
     .loginWith('email')
-    .getLoginPath('/login')
-    .postLoginPath('/register')
+    .getLoginPath('/')
+    .postLoginPath('/login')
+    .loginLocals({
+     title : 'Dial Before You Dig'
+  })
     .loginView('index.jade')
     .
-authenticate(function(email, occupation) {
+authenticate(function(email, password) {
 	var errors = [];
 	if(!email)
 		errors.push('Missing email');
+	if(!password) {
+		errors.push('Missing password');
+	}
 	if(errors.length)
 		return errors;
 
@@ -45,8 +56,11 @@ authenticate(function(email, occupation) {
 	}, email);
 })
 
-    .getRegisterPath('/register')
+    .getRegisterPath('/')
     .postRegisterPath('/register')
+    .registerLocals({
+     title : 'Dial Before You Dig'
+  })
     .registerView('index.jade')
     .validateRegistration( function (newUserAttrs, errors) {
       data.findUserByEmail(function(user) {
@@ -167,14 +181,14 @@ app.post('/register', function(req, res) {
 	res.render('registered', {
 		title : 'Thank you for your registration'
 	});
-});*/
+});
 
 app.get('/registered', function(req, res) {
 	//Redirect the user to the thank you page
 	res.render('registered', {
 		title : 'Thank you for your registration'
 	});
-});
+});*/
 
 
 /**
