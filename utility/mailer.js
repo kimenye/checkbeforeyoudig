@@ -24,7 +24,7 @@ module.exports.sendEmail = function(user) {
 		},
 		authentication : "login", // auth login is supported; anything else is no auth
 		username : from, // username
-		password : "hogwartsinn" //"password"         // password
+		password : "password"         // password
 	}, function(err, result) {
 		if(err) {
 			console.log("Could not send email");
