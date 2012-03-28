@@ -1,0 +1,7 @@
+module.exports = {
+	Environment: {
+		port : 3000,
+		database : 'mongodb://localhost/cbug',
+		url : "http://localhost:3000"
+	}
+}
