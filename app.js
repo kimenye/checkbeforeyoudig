@@ -20,63 +20,55 @@ var mailer = require('./utility/mailer');
 
 
 
-everyauth
-  .password
+everyauth.password
   	everyauth.password.extractExtraRegistrationParams( function (req) {
-  return {
-      occupation: req.body.occupation
-  };
-})
+  		return {
+      		occupation: req.body.occupation
+  		};
+	})
     .loginWith('email')
-    .getLoginPath('/')
+    .getLoginPath('/home')
     .postLoginPath('/login')
     .loginLocals({
-     title : 'Dial Before You Dig'
-  })
+     	title : CONFIG.name
+  	})
     .loginView('index.jade')
-    .
-authenticate(function(email, password) {
-	var errors = [];
-	if(!email)
-		errors.push('Missing email');
-	if(!password) {
-		errors.push('Missing password');
-	}
-	if(errors.length)
-		return errors;
-
-	data.findUserByEmail(function(user) {
-		if(user && user.password === password) {
-			return user;
-			console.log("Login successful");
-		} else {
-			return ['Login failed'];
-			console.log("Login failed");
+    .authenticate(function(email, password) {
+		var errors = [];
+		if(!email)
+			errors.push('Missing email');
+		if(!password) {
+			errors.push('Missing password');
 		}
-	}, email);
-})
+		if(errors.length)
+			return errors;
 
-    .getRegisterPath('/')
+		data.findUserByEmail(function(user) {
+			if(user && user.password === password) {
+				return user;
+				console.log("Login successful");
+			} else {
+				return ['Login failed'];
+				console.log("Login failed");
+			}
+		}, email);
+	})
+    .getRegisterPath('/join')
     .postRegisterPath('/register')
     .registerLocals({
-     title : 'Dial Before You Dig'
-  })
+     	title : CONFIG.name
+  	})
     .registerView('index.jade')
     .validateRegistration( function (newUserAttrs, errors) {
-      data.findUserByEmail(function(user) {
-		if(user) {
-			errors.push('Email already registered');
-			console.log("Email already registered");
-		}
-		
-	}, newUserAttrs.email);
-      
-      if(errors.length) {
-			return errors;
-		}
+		console.log('Validate the registration')
+		//TODO: This is a workaround
+		//we should already be having all the parameters we need.
+		//therefore we should clear the validation
+		errors.splice(0,errors.length);
+		return errors;
     })
     .registerUser(function(newUserAttrs) {
-
+		console.log('Creating new user')
 		var emailAddress = newUserAttrs.email;
 		var occupation = newUserAttrs.occupation;
 		var token = generateUUID();
@@ -91,17 +83,23 @@ authenticate(function(email, password) {
 		}
 
 		console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
-
+		var promise = this.Promise();
 		data.createUser(function(user) {
-			// Send an email to the user
-			mailer.sendEmail(user);
+			//TODO: This should now validate whether the email address has already been used.
+			
+			// Send an email to the user. Temporarily disabled this so as not to run it twice
+			if (!CONFIG.test)
+				mailer.sendEmail(user);
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
-			return user;
+			
+			promise.fulfill(user);
+			
 		}, emailAddress, occupation, token);
-})
-
+		return promise
+	})
     .loginSuccessRedirect('/home')
     .registerSuccessRedirect('/registered');
+
 
 
 // Configuration
@@ -122,6 +120,7 @@ app.configure(function() {
 	app.use(express.static(__dirname + '/public'));
 });
 
+everyauth.debug = true;
 everyauth.helpExpress(app);
 
 app.configure('development', function() {
@@ -136,59 +135,42 @@ app.configure('production', function() {
 });
 // Routes
 
-app.get('/', routes.index);
+
+app.get('/', function (req, res) {
+	console.log("User is logged in " + req.loggedIn);
+	if (!req.loggedIn) {
+		res.render('index', { title: CONFIG.name, layout: 'layout'})
+	}
+	else
+	{
+		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
+	}
+});
 
 app.get('/home', function(req, res) {
 	res.render('home', {
-		title : 'Dial Before You Dig :: test',
+		title : CONFIG.name,
 		layout : 'layout'
 	})
 });
 
 app.get('/test', function(req, res) {
 	res.render('test', {
-		title : 'Dial Before You Dig :: test',
+		title : CONFIG.name,
 		layout : 'layout'
 	})
-});
-/**
- * This gets called when you post the register form
- */
-/*
-app.post('/register', function(req, res) {
-	var emailAddress = req.param('emailAddress');
-	var occupation = req.param('occupation');
-	var token = generateUUID();
-	function generateUUID() {
-		var d = new Date().getTime();
-		var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (d + Math.random() * 16) % 16 | 0;
-			d = d / 16 | 0;
-			return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-		});
-		return uuid;
-	};
-
-
-	console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
-
-	data.createUser(function(user) {
-		// Send an email to the user
-		mailer.sendEmail(user);
-		console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
-	}, emailAddress, occupation, token);
-	//Redirect the user to the thank you page
-	res.render('registered', {
-		title : 'Thank you for your registration'
-	});
 });
 
 app.get('/registered', function(req, res) {
 	//Redirect the user to the thank you page
+	
+	//for some reason registration seems to log you in?
+	//so we need to override this
+	req.logout();
 	res.render('registered', {
 		title : 'Thank you for your registration'
 	});
-});*/
+});
 
 
 /**
@@ -208,7 +190,7 @@ app.get('/confirm', function(req, res) {
 /**
  * This gets called when a user sets their password
  */
-app.post('/validate', function(req, res) {
+app.post('/activate', function(req, res) {
 	// Will implement front end validation
 	if(req.param('password') === req.param('passwordConfirm')) {
 		data.updateUser(function(req, res) {
@@ -216,7 +198,7 @@ app.post('/validate', function(req, res) {
 		}, req.param('token'), new Date(), req.param('password'));
 
 		res.render('home', {
-			title : 'Dial Before You Dig :: test',
+			title : CONFIG.name,
 			layout : 'layout'
 		})
 	} else {
