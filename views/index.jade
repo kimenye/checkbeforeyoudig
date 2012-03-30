@@ -14,6 +14,10 @@
 							a(data-toggle="tab", href="#login") Login
 					.tab-content
 						div#register.tab-pane.active
+							- if ('undefined' !== typeof errors && errors.length)
+							ul#errors
+								- each error in errors
+									li.error=error
 							form.form-horizontal(method="POST", action="/register")
 								fieldset
 									legend Enter your details to register
@@ -43,6 +47,10 @@
 								.form-actions
 									button.btn.btn-primary(type="submit", value="Register") Register
 						div#login.tab-pane
+							- if ('undefined' !== typeof errors && errors.length)
+							ul#errors
+								- each error in errors
+									li.error=error
 							form.form-horizontal(method="POST", action="/login")
 								fieldset
 									legend Enter your email address and password to login

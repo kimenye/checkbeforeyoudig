@@ -1,13 +1,8 @@
-// Still working on the everyauth functionality. Will complete by the end of the day.
-// That and jasmine integration
-
-
-
 /**
  * Module dependencies.
  */
 
-var express = require('express'), routes = require('./routes'), everyauth = require('everyauth'), jasmine = require('jasmine-node');
+var express = require('express'), routes = require('./routes'), everyauth = require('everyauth');
 
 var app = module.exports = express.createServer();
 var CONFIG = require('config').Environment;
@@ -21,7 +16,7 @@ var mailer = require('./utility/mailer');
 
 
 everyauth.password
-  	everyauth.password.extractExtraRegistrationParams( function (req) {
+  	.extractExtraRegistrationParams( function (req) {
   		return {
       		occupation: req.body.occupation
   		};
@@ -85,14 +80,17 @@ everyauth.password
 		console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
 		var promise = this.Promise();
 		data.createUser(function(user) {
-			//TODO: This should now validate whether the email address has already been used.
-			
-			// Send an email to the user. Temporarily disabled this so as not to run it twice
+			if(user) {
+				// Send an email to the user. Temporarily disabled this so as not to run it twice
 			if (!CONFIG.test)
 				mailer.sendEmail(user);
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 			
 			promise.fulfill(user);
+			}
+			else {
+				return promise.fulfill(["Email already registered"]);
+			}
 			
 		}, emailAddress, occupation, token);
 		return promise
@@ -139,7 +137,7 @@ app.configure('production', function() {
 app.get('/', function (req, res) {
 	console.log("User is logged in " + req.loggedIn);
 	if (!req.loggedIn) {
-		res.render('index', { title: CONFIG.name, layout: 'layout'})
+		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
 	}
 	else
 	{

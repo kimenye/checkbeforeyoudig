@@ -1,5 +1,3 @@
-// By the end of the day, will have jasmine integrated and have better tests
-
 // Data provider
 var DataProvider = require('./dataprovider').DataProvider;
 var data = new DataProvider();

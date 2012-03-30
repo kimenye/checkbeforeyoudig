@@ -42,8 +42,7 @@ DataProvider.prototype.findUserByEmail = function(callback, email) {
 	}, function(error, user) {
 		if(error) {
 			callback(error);
-		}
-		else {
+		} else {
 			callback(user);
 		}
 	});
@@ -57,8 +56,7 @@ DataProvider.prototype.findUserByToken = function(callback, tokenId) {
 	}, function(error, user) {
 		if(error) {
 			callback(error);
-		}
-		else {
+		} else {
 			callback(user);
 		}
 	});
@@ -67,15 +65,23 @@ DataProvider.prototype.findUserByToken = function(callback, tokenId) {
  * Create a user
  */
 DataProvider.prototype.createUser = function(callback, email, occupation, token) {
-	var user = new User();
-	// Will add check for existing emails to prevent creation of users with the same email
-	user.emailAddress = email;
-	user.occupation = occupation;
-	user.token = token;
-	user.activated = false;
 
-	user.save();
-	callback(user);
+	this.findUserByEmail(function(user) {
+		if(user) {
+			callback(null);
+		} else {
+			var newUser = new User();
+			newUser.emailAddress = email;
+			newUser.occupation = occupation;
+			newUser.token = token;
+			newUser.activated = false;
+
+			newUser.save();
+			callback(newUser);
+		}
+	}, email);
+	// Will add check for existing emails to prevent creation of users with the same email
+
 };
 /**
  * Update a user
@@ -93,3 +99,4 @@ DataProvider.prototype.updateUser = function(callback, token, registrationDate, 
 };
 
 exports.DataProvider = DataProvider;
+exports.User = User;
