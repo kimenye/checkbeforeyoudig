@@ -89,12 +89,17 @@ DataProvider.prototype.createUser = function(callback, email, occupation, token)
 DataProvider.prototype.updateUser = function(callback, token, registrationDate, password) {
 
 	this.findUserByToken(function(user) {
-		user.registrationDate = registrationDate;
-		user.activated = true;
-		user.password = password;
+		if(user) {
+			user.registrationDate = registrationDate;
+			user.activated = true;
+			user.password = password;
 
-		user.save();
-		callback(user);
+			user.save();
+			callback(user);
+		} else {
+			callback(null);
+		}
+
 	}, token);
 };
 

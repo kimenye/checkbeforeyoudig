@@ -22,10 +22,11 @@ everyauth.password
   		};
 	})
     .loginWith('email')
-    .getLoginPath('/home')
+    .getLoginPath('/signin')
     .postLoginPath('/login')
     .loginLocals({
-     	title : CONFIG.name
+     	title : CONFIG.name,
+     	errors: []
   	})
     .loginView('index.jade')
     .authenticate(function(email, password) {
@@ -38,20 +39,21 @@ everyauth.password
 		if(errors.length)
 			return errors;
 
+		var promise = this.Promise();
 		data.findUserByEmail(function(user) {
 			if(user && user.password === password) {
-				return user;
-				console.log("Login successful");
+				promise.fulfill(user);
 			} else {
-				return ['Login failed'];
-				console.log("Login failed");
+				return promise.fulfill(["Incorrect username/password combination"]);
 			}
 		}, email);
+		return promise;
 	})
     .getRegisterPath('/join')
     .postRegisterPath('/register')
     .registerLocals({
-     	title : CONFIG.name
+     	title : CONFIG.name,
+     	errors: []
   	})
     .registerView('index.jade')
     .validateRegistration( function (newUserAttrs, errors) {
@@ -146,10 +148,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/home', function(req, res) {
-	res.render('home', {
-		title : CONFIG.name,
-		layout : 'layout'
-	})
+	if (!req.loggedIn) {
+		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
+	}
+	else
+	{
+		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
+	}
 });
 
 app.get('/test', function(req, res) {
@@ -181,28 +186,40 @@ app.get('/confirm', function(req, res) {
 	// Redirect the user to the password-set/confirm page
 	res.render('confirm', {
 		title : 'Set your Password',
-		token : token
+		token : token,
+		title : CONFIG.name,
+		layout : 'layout'
 	});
 
 });
 /**
  * This gets called when a user sets their password
  */
+
 app.post('/activate', function(req, res) {
-	// Will implement front end validation
 	if(req.param('password') === req.param('passwordConfirm')) {
-		data.updateUser(function(req, res) {
-			console.log("Activation: " + user.activated + " regDate" + user.registrationDate);
+		data.updateUser(function(user) {
+			if(user) {
+				res.render('index', {
+					title: CONFIG.name,
+					layout: 'layout',
+					errors: ["Account activated. You can now login"]
+				});
+			} else {
+				res.render('index', {
+					title: CONFIG.name,
+					layout: 'layout',
+					errors: ["Error activating account"]
+				});
+			}
 		}, req.param('token'), new Date(), req.param('password'));
 
-		res.render('home', {
-			title : CONFIG.name,
-			layout : 'layout'
-		})
 	} else {
 		console.log("Passwords do not match");
 	}
 });
+
+
 var port = CONFIG.port;
 app.listen(port, function() {
 	console.log("Listening on " + port);

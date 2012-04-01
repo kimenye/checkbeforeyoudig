@@ -23,7 +23,7 @@ function testFindUserByEmail() {
 }
 
 function testFindUserByToken() {
-	var expectedToken = "c84257cdef11473cd4e61e7e01f32db6";
+	var expectedToken = "f66068877cae46dfb4a628fecfec8a0d";
 	data.findUserByToken(function(user) {
 		 		if (user.token === expectedToken) {
 		 			console.log("User found");
@@ -31,7 +31,7 @@ function testFindUserByToken() {
 		 			console.log("User not found");
 		 		}
 		console.log(user);
-	}, "c84257cdef11473cd4e61e7e01f32db6");
+	}, "f66068877cae46dfb4a628fecfec8a0d");
 }
 
 function testUpdateUser() {
@@ -52,7 +52,7 @@ function generateUUID() {
 		return uuid;
 	}
 
-testCreateUser();
-testFindUserByEmail();
+//testCreateUser();
+//testFindUserByEmail();
 testFindUserByToken();
-testUpdateUser();
+//testUpdateUser();
