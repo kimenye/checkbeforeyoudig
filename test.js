@@ -2,57 +2,74 @@
 var DataProvider = require('./dataprovider').DataProvider;
 var data = new DataProvider();
 
+var email = "test@kimenye.com";
+var occupation = "Developer";
+var token = "db07ddd580fa4f67a3f4fdcd8c21137c";
+
+/**
+ * Creates a user
+ */
 function testCreateUser() {
-	var token = generateUUID();
 	data.createUser(function(user) {
-		console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
-	}, "trevor@kimenye.com", "Developer", token
-	);
+		if(user) {
+			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
+		} else {
+			console.log("Error creating user");
+		}
+	}, email, occupation, token);
+}
+
+/**
+ * Tries to create a user with a previously saved email
+ */
+function testCreateUserAgain() {
+	data.createUser(function(user) {
+		if(user) {
+			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
+		} else {
+			console.log("Error creating user");
+		}
+	}, email, occupation, token);
 }
 
 function testFindUserByEmail() {
-	var expectedEmail = "trevor@kimenye.com";
 	data.findUserByEmail(function(user) {
-		 		if (user && user.emailAddress === expectedEmail) {
-		 			console.log("User found");
-		 		} else {
-		 			console.log("User not found");
-		 		}
-		console.log(user);
-	}, "trevor@kimenye.com");
+		if(user && user.emailAddress === email) {
+			console.log("Find by email: User found");
+		} else {
+			console.log("Find by email: User not found");
+		}
+	}, email);
 }
 
 function testFindUserByToken() {
-	var expectedToken = "f66068877cae46dfb4a628fecfec8a0d";
 	data.findUserByToken(function(user) {
-		 		if (user.token === expectedToken) {
-		 			console.log("User found");
-		 		} else {
-		 			console.log("User not found");
-		 		}
-		console.log(user);
-	}, "f66068877cae46dfb4a628fecfec8a0d");
+		console.log(token);
+		if(user && user.token === token) {
+			console.log("Find by token: User found");
+		} else {
+			console.log("Find by token: User not found");
+		}
+	}, token);
 }
 
 function testUpdateUser() {
 	var date = new Date()
 	data.updateUser(function(user) {
-		console.log("Password set: " + user.password);
-		console.log("Activated: " + user.activated);
-	}, "c84257cdef11473cd4e61e7e01f32db6", date, "secret");
+		console.log("Update user: Password set: " + user.password);
+		console.log("Update user: Activated: " + user.activated);
+	}, token, date, "secret");
 }
 
-function generateUUID() {
-		var d = new Date().getTime();
-		var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-			var r = (d + Math.random() * 16) % 16 | 0;
-			d = d / 16 | 0;
-			return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-		});
-		return uuid;
-	}
+function testDeleteUser() {
+	data.deleteUser(function(msg) {
+		console.log(msg);
+	}, email);
+}
 
-//testCreateUser();
-//testFindUserByEmail();
+testCreateUser();
+testCreateUserAgain();
+testFindUserByEmail();
 testFindUserByToken();
-//testUpdateUser();
+testUpdateUser();
+testDeleteUser();

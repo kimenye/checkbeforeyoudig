@@ -80,7 +80,6 @@ DataProvider.prototype.createUser = function(callback, email, occupation, token)
 			callback(newUser);
 		}
 	}, email);
-	// Will add check for existing emails to prevent creation of users with the same email
 
 };
 /**
@@ -90,17 +89,37 @@ DataProvider.prototype.updateUser = function(callback, token, registrationDate, 
 
 	this.findUserByToken(function(user) {
 		if(user) {
-			user.registrationDate = registrationDate;
-			user.activated = true;
-			user.password = password;
+			// Check if user is activated
+			if(user.activated) {
+				callback(user, "Account activated");
+			} else {
+				user.registrationDate = registrationDate;
+				user.activated = true;
+				user.password = password;
 
-			user.save();
-			callback(user);
+				user.save();
+				callback(user);
+			}
 		} else {
 			callback(null);
 		}
 
 	}, token);
+};
+
+/**
+ * Deletes a user
+ */
+DataProvider.prototype.deleteUser = function(callback, email) {
+
+	this.findUserByEmail(function(user) {
+		if(user) {
+			user.remove();
+			callback("Deleted");
+		} else {
+			callback("User not found");
+		}
+	}, email);
 };
 
 exports.DataProvider = DataProvider;

@@ -177,7 +177,7 @@ app.get('/registered', function(req, res) {
 
 
 /**
- * This gets called when a user click on the confirmation link
+ * This gets called when a user clicks on the confirmation link
  */
 app.get('/confirm', function(req, res) {
 	var token = req.param('token')
@@ -198,13 +198,22 @@ app.get('/confirm', function(req, res) {
 
 app.post('/activate', function(req, res) {
 	if(req.param('password') === req.param('passwordConfirm')) {
-		data.updateUser(function(user) {
+		data.updateUser(function(user, error) {
 			if(user) {
-				res.render('index', {
+				if(!error) {
+					res.render('index', {
+						title : CONFIG.name,
+						layout : 'layout',
+						errors : ["Account activated. You can now login"]
+					});
+				}
+				else {
+					res.render('index', {
 					title: CONFIG.name,
 					layout: 'layout',
-					errors: ["Account activated. You can now login"]
+					errors: ["Account already activated. If you have forgotten your password, click on 'Forgot Password' link"]
 				});
+				}
 			} else {
 				res.render('index', {
 					title: CONFIG.name,
