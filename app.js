@@ -178,6 +178,11 @@ app.get('/registered', function(req, res) {
 	});
 });
 
+app.get('/logout', function(req, res) {
+	req.logout();
+	// res.render('')
+	this.redirect(res, '/');
+});
 
 /**
  * This gets called when a user clicks on the confirmation link

@@ -117,6 +117,17 @@ $(document).ready(function() {
 				} 
 			}
 		});
+		
+		$('#beta-dialog').dialog({
+			autoOpen: true,
+			width: 600,
+			modal: true,
+			buttons: {
+				"Ok": function() { 
+					$(this).dialog("close"); 
+				} 
+			}
+		});
 
 		// Dialog Link
 		$('#btn_help').click(function(){
