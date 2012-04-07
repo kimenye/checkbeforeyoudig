@@ -1,7 +1,11 @@
 {
-    "name": "application-name"
+    "name": "dialbeforeyoudig"
   , "version": "0.0.1"
   , "private": true
+  , "engines" : {
+	"node" : "0.6.x"
+	,"npm":  "1.1.x"
+  }
   , "dependencies": {
       "express": "2.5.4"
     , "stylus": ">= 0.0.1"
