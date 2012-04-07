@@ -7,6 +7,9 @@ var url = CONFIG.database;
 mongoose.connect(url);
 
 var UserSchema = new Schema({
+	fullName: {
+		type : String
+	},
 	emailAddress : {
 		type : String
 	},
@@ -64,7 +67,7 @@ DataProvider.prototype.findUserByToken = function(callback, tokenId) {
 /**
  * Create a user
  */
-DataProvider.prototype.createUser = function(callback, email, occupation, token) {
+DataProvider.prototype.createUser = function(callback, email, occupation, token, name) {
 
 	this.findUserByEmail(function(user) {
 		if(user) {
@@ -74,6 +77,7 @@ DataProvider.prototype.createUser = function(callback, email, occupation, token)
 			newUser.emailAddress = email;
 			newUser.occupation = occupation;
 			newUser.token = token;
+			newUser.fullName = name;
 			newUser.activated = false;
 
 			newUser.save();

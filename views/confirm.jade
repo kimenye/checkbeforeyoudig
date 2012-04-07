@@ -1,12 +1,16 @@
-form#confirm(method="POST", action="/activate")
-	fieldset
-		legend Set your Password
-		label(for="password") Password
-			input#pass(type="password", name="password", required="required")
-		label(for="passwordConfirm") Confirm Password
-			input#passConfirm(type="password", name="passwordConfirm", required="required", oninput="check(this)")
-		input(type="hidden", value="#{token}", name="token")
-		button(type="submit", value="Submit") Submit
+!=partial('header')
+.container
+	.row-fluid
+		form#confirm(method="POST", action="/activate")
+			fieldset
+				legend Set your Password
+				label(for="password") Password
+					input#pass(type="password", name="password", required="required")
+				label(for="passwordConfirm") Confirm Password
+					input#passConfirm(type="password", name="passwordConfirm", required="required", oninput="check(this)")
+				input(type="hidden", value="#{token}", name="token")
+				button(type="submit", value="Submit") Submit
+	!=partial('footer')
 
 script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
 script(type='text/javascript', src='javascripts/form_validation.js')

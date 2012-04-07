@@ -18,7 +18,8 @@ var mailer = require('./utility/mailer');
 everyauth.password
   	.extractExtraRegistrationParams( function (req) {
   		return {
-      		occupation: req.body.occupation
+      		occupation: req.body.occupation,
+			fullName : req.body.fullName
   		};
 	})
     .loginWith('email')
@@ -68,6 +69,8 @@ everyauth.password
 		console.log('Creating new user')
 		var emailAddress = newUserAttrs.email;
 		var occupation = newUserAttrs.occupation;
+		var name = newUserAttrs.fullName;
+		
 		var token = generateUUID();
 		function generateUUID() {
 			var d = new Date().getTime();
@@ -94,7 +97,7 @@ everyauth.password
 				return promise.fulfill(["Email already registered"]);
 			}
 			
-		}, emailAddress, occupation, token);
+		}, emailAddress, occupation, token, name);
 		return promise
 	})
     .loginSuccessRedirect('/home')
@@ -201,6 +204,7 @@ app.post('/activate', function(req, res) {
 		data.updateUser(function(user, error) {
 			if(user) {
 				if(!error) {
+					//TODO: Login user automatically
 					res.render('index', {
 						title : CONFIG.name,
 						layout : 'layout',

@@ -5,7 +5,7 @@ module.exports = {
 		url : "http://dialbeforeyoudig.herokuapp.com",
 		mail_from_address : 'checkbeforeyoudig@sprout.co.ke',
 		smtp_server : "smtp.gmail.com",
-		test: true,
+		test: false,
 		name: "Check Before You Dig",
 		smtp_port : "587"
 	}

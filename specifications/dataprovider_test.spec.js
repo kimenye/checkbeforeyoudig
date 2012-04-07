@@ -12,7 +12,8 @@ describe("dataprovider", function() {
 	var email = "test@kimenye.com";
 	var occupation = "Developer";
 	var token = "db07ddd580fa4f67a3f4fdcd8c21137c";
-
+	var fullName = "Test";
+	
 	it("creates a user", function() {
 		data.createUser(function(user) {
 			expect(user.emailAddress).toEqual(email);
@@ -21,7 +22,8 @@ describe("dataprovider", function() {
 			expect(user.password).toBeUndefined();
 			expect(user.registrationDate).toBeUndefined();
 			expect(user.activated).toBeFalsy();
-		}, email, occupation, token);
+			expect(user.fullName).toEqual(fullName);
+		}, email, occupation, token, fullName);
 	});
 	it("tries to create a user with an existing email", function() {
 		data.createUser(function(user) {

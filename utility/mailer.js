@@ -4,6 +4,7 @@ var CONFIG = require('config').Environment
 var confirmUrl = CONFIG.url + "/confirm?token=";
 var website = CONFIG.url;
 var from = CONFIG.mail_from_address;
+var password = CONFIG.password;
 
 module.exports.sendEmail = function(user) {
 	var date = new Date();
@@ -17,14 +18,14 @@ module.exports.sendEmail = function(user) {
 		template : "public/templates/emailTemplate.txt", // path to template
 		data : {
 			"date" : date,
-			"user" : "Jane Doe",
+			"user" : user.fullName,
 			"username" : user.emailAddress,
 			"confirm" : confirmUrl + user.token,
 			"website address" : website
 		},
 		authentication : "login", // auth login is supported; anything else is no auth
 		username : from, // username
-		password : "password"         // password
+		password : password         // password
 	}, function(err, result) {
 		if(err) {
 			console.log("Could not send email");
