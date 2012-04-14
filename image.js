@@ -1,6 +1,7 @@
 var http = require('http');
 var url = require('url');
 var fs = require('fs');
+var PDFDocument = require('pdfkit-memory');
 
 /**
  * See static maps documentation for additional parameters.
@@ -37,16 +38,43 @@ request.addListener('response', function (response) {
 	if (response.statusCode == 200) {
 		response.setEncoding('binary');
 		var imageData = '';
+		
+		var bufSize = 64 * 1024;
+		var bufPos = 0;
+		var buf = new Buffer(bufSize);
 
 		response.addListener('data', function(chunk) {
 			// console.log('Data chunk added');
 			imageData += chunk;
+			var bufNextPos = bufPos + chunk.length;
+		    if (bufNextPos == bufSize) {
+		      buf.write(chunk,'binary',bufPos);
+		      res.write(buf);
+		      bufPos = 0;
+		    }
+		    else {
+		      buf.write(chunk,'binary',bufPos);
+		      bufPos = bufNextPos;
+		    }
+			
 		});
 		
 		response.addListener('end', function() {
-			fs.writeFile('image.png', imageData, 'binary', function(err) {
+			fs.writeFile('image.png', imageData, bufPos, 'binary', function(err) {
 				if (err) throw err;
-				console.log('File saved');	
+				console.log('File saved');
+				
+				doc = new PDFDocument();
+				
+				if (bufPos != 0) {
+					buf = buf.slice(0, bufPos);
+				};
+				//buffer = new Buffer(imageData.length);
+				
+				//doc.image(imageData, 100,100);
+				// console.log("Chunk size " + buf.readUInt32());
+				doc.imageFromBuffer(buf, 100, 100);
+				doc.write('image.pdf');	
 			});
 		});
 	}
