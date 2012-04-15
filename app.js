@@ -87,8 +87,11 @@ everyauth.password
 		data.createUser(function(user) {
 			if(user) {
 				// Send an email to the user. Temporarily disabled this so as not to run it twice
-			if (!CONFIG.test)
-				mailer.sendEmail(user);
+			if (!CONFIG.test) {
+				var subject = "Dial Before you Dig Registration Confirmation";
+				var template = "public/templates/activationEmailTemplate.txt";
+				mailer.sendEmail(user, subject, template);
+			}
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 			
 			promise.fulfill(user);
@@ -200,11 +203,11 @@ app.get('/confirm', function(req, res) {
 	});
 
 });
+
 /**
  * This gets called when a user sets their password
  */
-
-app.post('/activate', function(req, res) {
+app.post('/setpassword', function(req, res) {
 	if(req.param('password') === req.param('passwordConfirm')) {
 		data.updateUser(function(user, error) {
 			if(user) {
@@ -213,21 +216,14 @@ app.post('/activate', function(req, res) {
 					res.render('index', {
 						title : CONFIG.name,
 						layout : 'layout',
-						errors : ["Account activated. You can now login"]
+						errors : ["Password saved. You can now login"]
 					});
-				}
-				else {
-					res.render('index', {
-					title: CONFIG.name,
-					layout: 'layout',
-					errors: ["Account already activated. If you have forgotten your password, click on 'Forgot Password' link"]
-				});
 				}
 			} else {
 				res.render('index', {
 					title: CONFIG.name,
 					layout: 'layout',
-					errors: ["Error activating account"]
+					errors: ["Error updating account"]
 				});
 			}
 		}, req.param('token'), new Date(), req.param('password'));
@@ -235,6 +231,41 @@ app.post('/activate', function(req, res) {
 	} else {
 		console.log("Passwords do not match");
 	}
+});
+
+/**
+ * Gets called when a user clicks the forgot-password link
+ */
+app.get('/forgotpassword', function(req, res) {
+	res.render('forgotpassword', {
+		title : CONFIG.name,
+		layout : 'layout'
+	})
+});
+
+/**
+ * Sends a password-reset link to the user
+ */
+app.post('/forgotpassword', function(req, res) {
+	data.findUserByEmail(function(user) {
+		if(user) {
+			if (!CONFIG.test) {
+				var subject = "Dial Before you Dig Password Reset";
+				var template = "public/templates/passwordResetEmailTemplate.txt";
+				mailer.sendEmail(user, subject, template);
+			}
+					res.render('passwordreset', {
+						title : CONFIG.name,
+						layout : 'layout'
+					});
+		}
+		else {
+			res.render('emailerror', {
+					title: CONFIG.name,
+					layout: 'layout'
+				});
+		}
+	}, req.param('email'));
 });
 
 

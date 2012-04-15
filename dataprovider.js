@@ -87,29 +87,30 @@ DataProvider.prototype.createUser = function(callback, email, occupation, token,
 
 };
 /**
- * Update a user
+ * Update a user. Is used when activating a user acc and when a user resets their password
  */
+
 DataProvider.prototype.updateUser = function(callback, token, registrationDate, password) {
 
 	this.findUserByToken(function(user) {
 		if(user) {
-			// Check if user is activated
-			if(user.activated) {
-				callback(user, "Account activated");
-			} else {
+			// Checks if user is not activated before activating them and setting the registration date
+			if(!user.activated) {
 				user.registrationDate = registrationDate;
 				user.activated = true;
-				user.password = password;
-
-				user.save();
-				callback(user);
 			}
+			
+			user.password = password;
+
+			user.save();
+			callback(user);
 		} else {
 			callback(null);
 		}
 
 	}, token);
 };
+
 
 /**
  * Deletes a user
