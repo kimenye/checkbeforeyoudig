@@ -1,34 +1,9 @@
-// Node_mailer
-var email = require("mailer");
 var CONFIG = require('config').Environment;
 var to = "jokhessa@yahoo.com";
 var from = CONFIG.mail_from_address;
 var password = CONFIG.password;
-var subject = "Test Email";
+var nodemailer = require("nodemailer");
 
-function sendEmail() {
-	email.send({
-		host : CONFIG.smtp_server, // smtp server hostname
-		port : CONFIG.smtp_port, // for SSL support - REQUIRES NODE v0.3.x OR HIGHER
-		domain : "localhost", // domain used by client to identify itself to server
-		to : to,
-		from : "Sprout Consulting <" + from + ">",
-		subject : subject,
-		authentication : "login", // auth login is supported; anything else is no auth
-		username : from, // username
-		password : password,         // password
-		attachments : [{
-			fileName : "text1.txt",
-			contents : "hello world!"
-		}]
-	}, function(err, result) {
-		if(err) {
-			console.log("Could not send email");
-		} else {
-			console.log("Email sent")
-		}
-	});
-}
 
 var http = require('http');
 var url = require('url');
@@ -113,5 +88,41 @@ request.addListener('response', function(response) {
 	}
 });
 
+// create reusable transport method (opens pool of SMTP connections)
+var smtpTransport = nodemailer.createTransport("SMTP", {
+	service : "Gmail",
+	auth : {
+		user : from,
+		pass : password
+	}
+});
+
+// setup e-mail data with unicode symbols
+var mailOptions = {
+	from : "Sprout Consulting <" + from + ">", // sender address
+	to : to, // list of receivers
+	subject : "Test Email", // Subject line
+	html : "<b>This is a test email</b>", // html body
+	attachments : [{
+		fileName : "text1.txt",
+		contents : "hello world!"
+	}, {
+		fileName : "text4.txt",
+		streamSource : fs.createReadStream("file.txt")
+	}]
+}
+
+// send mail with defined transport object
+smtpTransport.sendMail(mailOptions, function(error, response) {
+	if(error) {
+		console.log(error);
+	} else {
+		console.log("Message sent: " + response.message);
+	}
+
+	// if you don't want to use this transport object anymore, uncomment following line
+	smtpTransport.close();
+	// shut down the connection pool, no more messages
+});
+
 request.end();
-sendEmail();
