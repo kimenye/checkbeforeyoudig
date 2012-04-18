@@ -1,5 +1,5 @@
 var CONFIG = require('config').Environment;
-var to = "kimenye@gmail.com";
+var to = "CHANGEME";
 var from = CONFIG.mail_from_address;
 var password = CONFIG.password;
 var nodemailer = require("nodemailer");
