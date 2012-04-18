@@ -1,8 +1,9 @@
 var CONFIG = require('config').Environment;
-var to = "jokhessa@yahoo.com";
+var to = "kimenye@gmail.com";
 var from = CONFIG.mail_from_address;
 var password = CONFIG.password;
 var nodemailer = require("nodemailer");
+var BufferStream = require('bufferstream')
 
 
 var http = require('http');
@@ -42,6 +43,8 @@ var request = client.request('GET', u['path'], {
 
 console.log('Request made ' + u['host'] + u['path']);
 
+doc = new PDFDocument();
+
 request.addListener('response', function(response) {
 	console.log("Response is " + response.statusCode);
 	if(response.statusCode == 200) {
@@ -53,7 +56,6 @@ request.addListener('response', function(response) {
 		var buf = new Buffer(bufSize);
 
 		response.addListener('data', function(chunk) {
-			// console.log('Data chunk added');
 			imageData += chunk;
 			var bufNextPos = bufPos + chunk.length;
 			if(bufNextPos == bufSize) {
@@ -72,17 +74,14 @@ request.addListener('response', function(response) {
 				if(err)
 					throw err;
 				console.log('File saved');
-				doc = new PDFDocument();
+				
 
 				if(bufPos != 0) {
 					buf = buf.slice(0, bufPos);
 				};
-				//buffer = new Buffer(imageData.length);
-
-				//doc.image(imageData, 100,100);
-				// console.log("Chunk size " + buf.readUInt32());
 				doc.imageFromBuffer(buf, 100, 100);
-				doc.write('image.pdf');
+				// doc.write('image.pdf');
+				mail(doc)
 			});
 		});
 	}
@@ -97,32 +96,51 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
 	}
 });
 
+request.end();
+
 // setup e-mail data with unicode symbols
-var mailOptions = {
-	from : "Sprout Consulting <" + from + ">", // sender address
-	to : to, // list of receivers
-	subject : "Test Email", // Subject line
-	html : "<b>This is a test email</b>", // html body
-	attachments : [{
-		fileName : "text1.txt",
-		contents : "hello world!"
-	}, {
-		fileName : "text4.txt",
-		streamSource : fs.createReadStream("file.txt")
-	}]
+function mail(doc) {
+	
+	doc.output(function(out) {
+		console.log("Length of output is " + out.length);
+		stream = new BufferStream({encoding:'binary', size:'flexible'});
+
+		stream.write(out);
+		console.log('The stream is writtable ' + stream.readable);
+		stream.end();
+		
+		
+
+		var mailOptions = {
+			from : "Sprout Consulting <" + from + ">", // sender address
+			to : to, // list of receivers
+			subject : "Test Email", // Subject line
+			html : "<b>This is a test email</b>", // html body
+			attachments : [{
+				fileName : "text1.txt",
+				contents : "hello world!"
+			}, {
+				fileName : "image.pdf",
+				streamSource : stream
+			}]
+		}
+
+
+		// send mail with defined transport object
+		smtpTransport.sendMail(mailOptions, function(error, response) {
+			if(error) {
+				console.log(error);
+			} else {
+				console.log("Message sent: " + response.message);
+			}
+
+			// if you don't want to use this transport object anymore, uncomment following line
+			smtpTransport.close();
+			// shut down the connection pool, no more messages
+		});
+	});
+	
+	
 }
 
-// send mail with defined transport object
-smtpTransport.sendMail(mailOptions, function(error, response) {
-	if(error) {
-		console.log(error);
-	} else {
-		console.log("Message sent: " + response.message);
-	}
 
-	// if you don't want to use this transport object anymore, uncomment following line
-	smtpTransport.close();
-	// shut down the connection pool, no more messages
-});
-
-request.end();

@@ -16,5 +16,6 @@
 	, "config" : "0.4.11"
 	, "jasmine-node" : "1.0.22"
 	, "pdfkit-memory" : ">=0.0.2"
+	, "bufferstream" : ">=0.5.1"
   }
 }
