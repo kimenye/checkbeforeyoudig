@@ -140,3 +140,7 @@ select {
 #help img {
   width: 500px;
 }
+#logout {
+  display: inline-block;
+  margin-left: 20px;
+}

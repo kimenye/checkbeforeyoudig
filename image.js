@@ -70,10 +70,10 @@ request.addListener('response', function(response) {
 		});
 
 		response.addListener('end', function() {
-			fs.writeFile('image.png', imageData, bufPos, 'binary', function(err) {
-				if(err)
-					throw err;
-				console.log('File saved');
+			//fs.writeFile('image.png', imageData, bufPos, 'binary', function(err) {
+				//if(err)
+					//throw err;
+				//console.log('File saved');
 				
 
 				if(bufPos != 0) {
@@ -82,7 +82,7 @@ request.addListener('response', function(response) {
 				doc.imageFromBuffer(buf, 100, 100);
 				// doc.write('image.pdf');
 				mail(doc)
-			});
+			//});
 		});
 	}
 });

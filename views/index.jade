@@ -15,7 +15,7 @@
 					.tab-content
 						div#register.tab-pane.active
 							- if ('undefined' !== typeof errors && errors.length)
-							ul#errors
+							ul.errors
 								- each error in errors
 									li.error=error
 							form.form-horizontal(method="POST", action="/register")
@@ -52,7 +52,7 @@
 									button.btn.btn-primary(type="submit", value="Register") Register
 						div#login.tab-pane
 							- if ('undefined' !== typeof errors && errors.length)
-							ul#errors
+							ul.errors
 								- each error in errors
 									li.error=error
 							form.form-horizontal(method="POST", action="/login")

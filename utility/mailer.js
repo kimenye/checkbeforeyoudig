@@ -1,37 +1,37 @@
-var email = require("mailer");
-var CONFIG = require('config').Environment
+var CONFIG = require('config').Environment;
 
-var confirmUrl = CONFIG.url + "/confirm?token=";
-var website = CONFIG.url;
 var from = CONFIG.mail_from_address;
 var password = CONFIG.password;
+var nodemailer = require("nodemailer");
 
-module.exports.sendEmail = function(user, subject, template) {
-	var date = new Date();
-	
-	email.send({
-		host : CONFIG.smtp_server, // smtp server hostname
-		port : CONFIG.smtp_port, // for SSL support - REQUIRES NODE v0.3.x OR HIGHER
-		domain : "localhost", // domain used by client to identify itself to server
-		to : user.emailAddress,
-		from : "Sprout Consulting <" + from + ">",
-		subject : subject,
-		template : template, // path to template
-		data : {
-			"date" : date,
-			"user" : user.fullName,
-			"username" : user.emailAddress,
-			"confirm" : confirmUrl + user.token,
-			"website address" : website
-		},
-		authentication : "login", // auth login is supported; anything else is no auth
-		username : from, // username
-		password : password         // password
-	}, function(err, result) {
-		if(err) {
-			console.log("Could not send email");
-		} else {
-			console.log("Email sent")
+module.exports.sendEmail = function(user, subject, message) {
+	// create reusable transport method (opens pool of SMTP connections)
+	var smtpTransport = nodemailer.createTransport("SMTP", {
+		service : "Gmail",
+		auth : {
+			user : from,
+			pass : password
 		}
+	});
+
+	// setup e-mail data with unicode symbols
+	var mailOptions = {
+		from : "Sprout Consulting <" + from + ">", // sender address
+		to : user.emailAddress, // list of receivers
+		subject : subject, // Subject line
+		html : message // html body
+	}
+
+	// send mail with defined transport object
+	smtpTransport.sendMail(mailOptions, function(error, response) {
+		if(error) {
+			console.log(error);
+		} else {
+			console.log("Message sent: " + response.message);
+		}
+
+		// if you don't want to use this transport object anymore, uncomment following line
+		smtpTransport.close();
+		// shut down the connection pool, no more messages
 	});
 }

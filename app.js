@@ -12,7 +12,10 @@ var DataProvider = require('./dataprovider').DataProvider;
 var data = new DataProvider();
 
 var mailer = require('./utility/mailer');
+var emailMessage = require('./utility/emailMessage');
 
+var confirmUrl = CONFIG.url + "/confirm?token=";
+var website = CONFIG.url;
 
 
 everyauth.password
@@ -89,8 +92,8 @@ everyauth.password
 				// Send an email to the user. Temporarily disabled this so as not to run it twice
 			if (!CONFIG.test) {
 				var subject = "Dial Before you Dig Registration Confirmation";
-				var template = "public/templates/activationEmailTemplate.txt";
-				mailer.sendEmail(user, subject, template);
+				var message = emailMessage.getActivationEmail(user);
+				mailer.sendEmail(user, subject, message);
 			}
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 			
@@ -251,8 +254,8 @@ app.post('/forgotpassword', function(req, res) {
 		if(user) {
 			if (!CONFIG.test) {
 				var subject = "Dial Before you Dig Password Reset";
-				var template = "public/templates/passwordResetEmailTemplate.txt";
-				mailer.sendEmail(user, subject, template);
+				var message = emailMessage.getPasswordResetEmail(user);
+				mailer.sendEmail(user, subject, message);
 			}
 					res.render('passwordreset', {
 						title : CONFIG.name,
