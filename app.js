@@ -272,6 +272,18 @@ app.post('/forgotpassword', function(req, res) {
 });
 
 
+/**
+ * Saves a users search parameters
+ */
+app.post('/savesearch', function(req, res) {
+	data.saveEnquiry(function(enquiry) {
+		console.log(enquiry);
+		console.log("saved");
+	}, everyauth.user, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
+});
+
+
+
 var port = CONFIG.port;
 app.listen(port, function() {
 	console.log("Listening on " + port);

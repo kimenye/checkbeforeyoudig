@@ -1,4 +1,7 @@
 $(document).ready(function() {
+	var enquiryType, searchTerm, typeOfWork, cstmArea;
+	var EnquiryType = {"searchByName" : 0, "searchByCustomArea" : 1};
+
 	var geocoder, map, circle, rectangle;
 	var startingPosition;
 	var zonesLayer, pipesLayer;
@@ -88,13 +91,24 @@ $(document).ready(function() {
 		
 		$('#btn_submit').click(function(event) {
 			var text = $('#txt_where').val();
-			if (text && selectedItem == null) {
+			
+			if(text && selectedItem == null) {
+				enquiryType = EnquiryType.searchByName;
+				typeOfWork = $('#sel_type').val();
+				searchTerm = text;
+				
 				search(text);
 			}
-			else if (selectedItem != null)
-			{
+			
+			else
+			if(selectedItem != null) {
+				enquiryType = EnquiryType.searchByCustomArea;
+				typeOfWork = $('#sel_type').val();
+				cstmArea = selectedItem;
+
 				searchBounds(selectedItem.getBounds(), text);
 			}
+
 		});
 		
 		$("#txt_where").keypress(function(event) {
@@ -248,6 +262,18 @@ $(document).ready(function() {
 	}
 	
 	function searchBounds(bounds,text) {
+		
+		$.ajax({
+			type : "POST",
+			url : "http://localhost:3000/savesearch",
+			data : {
+				enquiryType : enquiryType,
+				searchTerm : searchTerm,
+				typeOfWork : typeOfWork,
+				customArea : cstmArea
+			}
+		});
+		
 		deactivate();
 		loadOverlays(bounds);
 		

@@ -127,5 +127,55 @@ DataProvider.prototype.deleteUser = function(callback, email) {
 	}, email);
 };
 
+
+/**
+ * Enquiry Schema
+ */
+var EnquirySchema = new Schema({
+	user: {
+		type: Schema.Types.Mixed
+	},
+	enquiryType: {
+		type : Number
+	},
+	searchType : {
+		type : String
+	},
+	typeOfWork : {
+		type : String
+	},
+	dateOfEnquiry : {
+		type : Date
+	},
+	customArea : {
+		type : Schema.Types.Mixed
+	}
+});
+
+/**
+ * Define an Enquiry Model
+ */
+var Enquiry = mongoose.model('Enquiry', EnquirySchema);
+
+/**
+ * Saves an enquiry
+ */
+DataProvider.prototype.saveEnquiry = function(callback, user, enquiryType, searchTerm, typeOfWork, dateOfEnquiry, customArea) {
+
+	var enquiry = new Enquiry();
+	enquiry.user = user;
+	enquiry.enquiryType = enquiryType;
+	enquiry.searchTerm = searchTerm;
+	enquiry.typeOfWork = typeOfWork;
+	enquiry.dateOfEnquiry = dateOfEnquiry;
+	enquiry.customArea = customArea;
+	
+	enquiry.save();
+	callback(enquiry);
+
+};
+
+
 exports.DataProvider = DataProvider;
 exports.User = User;
+exports.Enquiry = Enquiry;
