@@ -261,13 +261,13 @@ $(document).ready(function() {
 		zonesLayer.setMap(map);
 	}
 	
-	function getPolylineToSave(customArea) {
-		if (customArea && customArea.getPaths()) {
+	function getPolylineToSave(usrPath) {
+		if (usrPath && usrPath.getPaths()) {
 			var pts = [];
 
-			for(var idx=0;idx<customArea.getPaths().getAt(0).length;idx++) {
-				var latlng = customArea.getPaths().getAt(0).getAt(idx);
-				pts[pts.length] = { "lat" : latlng.lat(), "long" : latlng.lng() };
+			for(var idx=0;idx<usrPath.getPath().length;idx++) {
+				var latlng = usrPath.getPath().getAt(idx);
+				pts[pts.length] = { "lat" : latlng.lat(), "lng" : latlng.lng() };
 			}
 			console.log("Points is " + pts);
 			return pts;
@@ -362,6 +362,7 @@ $(document).ready(function() {
 		invalidate(zonesLayer);
 		invalidate(pipesLayer);
 		invalidate(selectedItem);
+		invalidate(cstmArea);
 		drawingManager.setMap(map);
 		
 		$('#txt_where').removeAttr('disabled').val('');
