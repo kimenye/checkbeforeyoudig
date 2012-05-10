@@ -261,16 +261,29 @@ $(document).ready(function() {
 		zonesLayer.setMap(map);
 	}
 	
+	function getPolylineToSave(customArea) {
+		if (customArea && customArea.getPaths()) {
+			var pts = [];
+
+			for(var idx=0;idx<customArea.getPaths().getAt(0).length;idx++) {
+				var latlng = customArea.getPaths().getAt(0).getAt(idx);
+				pts[pts.length] = { "lat" : latlng.lat(), "long" : latlng.lng() };
+			}
+			console.log("Points is " + pts);
+			return pts;
+		}
+		return null;
+	}
+	
 	function searchBounds(bounds,text) {
-		
 		$.ajax({
 			type : "POST",
-			url : "http://localhost:3000/savesearch",
+			url : "savesearch",
 			data : {
 				enquiryType : enquiryType,
 				searchTerm : searchTerm,
 				typeOfWork : typeOfWork,
-				customArea : cstmArea
+				customArea : getPolylineToSave(cstmArea)
 			}
 		});
 		
