@@ -1,3 +1,7 @@
+//STILL A WORK IN PROGRESS: LOGIN NOT HAPPENING CORRECTLY
+//Committed so I can pull it at work
+
+
 /**
  * Module dependencies.
  */
@@ -10,6 +14,9 @@ var CONFIG = require('config').Environment;
 // Data provider
 var DataProvider = require('./dataprovider').DataProvider;
 var data = new DataProvider();
+
+// User
+var User = require('./dataprovider').User;
 
 var mailer = require('./utility/mailer');
 var emailMessage = require('./utility/emailMessage');
@@ -30,19 +37,48 @@ everyauth.password
     .postLoginPath('/login')
     .loginLocals({
      	title : CONFIG.name,
-     	errors: []
+     	errors: new Array()
   	})
     .loginView('index.jade')
     .authenticate(function(email, password) {
-		var errors = [];
+		var errors = new Array();
 		if(!email)
 			errors.push('Missing email');
 		if(!password) {
 			errors.push('Missing password');
 		}
-		if(errors.length)
+		if(errors.length) {
 			return errors;
+		}
+		var newUser = new User();
+		
+		data.findUserByEmail(function(user) {
+			if(user) {
+				if(user.password === password) {
+					newUser = user;
+				} else {
+					errors.push('Incorrect username/password combination');
+				}
+			}
+			else {
+				errors.push('Incorrect username/password combination');
+			}
+	
+		}, email);
 
+		if(!newUser || errors.length) {
+			return errors;
+		}
+		else {
+			return newUser;
+		}
+			
+		// if (usersByLogin[login] && usersByLogin[login].password === password) {
+    //   return usersByLogin[login];
+    // } else {
+    //   return ['Login failed'];
+    // }
+/*
 		var promise = this.Promise();
 		data.findUserByEmail(function(user) {
 			if(user && user.password === password) {
@@ -51,7 +87,7 @@ everyauth.password
 				return promise.fulfill(["Incorrect username/password combination"]);
 			}
 		}, email);
-		return promise;
+		return promise;*/
 	})
     .getRegisterPath('/join')
     .postRegisterPath('/register')
@@ -59,7 +95,7 @@ everyauth.password
      	title : CONFIG.name,
      	errors: []
   	})
-    .registerView('index.jade')
+    .registerView('register.jade')
     .validateRegistration( function (newUserAttrs, errors) {
 		console.log('Validate the registration')
 		//TODO: This is a workaround
@@ -86,7 +122,8 @@ everyauth.password
 		}
 
 		console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
-		var promise = this.Promise();
+		//var promise = this.Promise();
+		var errors = new Array();
 		data.createUser(function(user) {
 			if(user) {
 				// Send an email to the user. Temporarily disabled this so as not to run it twice
@@ -97,14 +134,15 @@ everyauth.password
 			}
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 			
-			promise.fulfill(user);
+			return user;
+			//promise.fulfill(user);
 			}
 			else {
-				return promise.fulfill(["Email already registered"]);
+				errors.push('Email already registered');
 			}
 			
 		}, emailAddress, occupation, token, name);
-		return promise
+		return errors;
 	})
     .loginSuccessRedirect('/home')
     .registerSuccessRedirect('/registered');
@@ -243,6 +281,17 @@ app.get('/forgotpassword', function(req, res) {
 	res.render('forgotpassword', {
 		title : CONFIG.name,
 		layout : 'layout'
+	})
+});
+
+/**
+ * Gets called when a user clicks the register link
+ */
+app.get('/register', function(req, res) {
+	res.render('register', {
+		title : CONFIG.name,
+		layout : 'layout',
+		errors: new Array()
 	})
 });
 

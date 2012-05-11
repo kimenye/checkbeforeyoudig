@@ -7,69 +7,27 @@
 					small &nbsp;Free Information on underground pipes
 			.row
 				.span6
-					ul#tabs.nav.nav-tabs
-						li.active
-							a(data-toggle="tab", href="#register") Register
-						li
-							a(data-toggle="tab", href="#login") Login
-					.tab-content
-						div#register.tab-pane.active
-							- if ('undefined' !== typeof errors && errors.length)
-							ul.errors
-								- each error in errors
-									li.error=error
-							form.form-horizontal(method="POST", action="/register")
-								fieldset
-									legend Enter your details to register
-								.control-group
-									label.control-label(for="name") Name
-									.controls
-										input#fullName.input-xlarge(type="text", name="fullName", required="required")
-								.control-group
-									label.control-label(for="email") Email Address
-									.controls
-										input#emailAddress.input-xlarge(type="email", name="email", required="required")
-								.control-group
-									label.control-label(for="occupation") Occupation
-									.controls
-										select#occupation(name="occupation")
-											option(value="Architect, Draftsman") Architect, Draftsman
-											option(value="Builder") Builder
-											option(value="Concrete Worker") Concrete Worker
-											option(value="Developer") Developer
-											option(value="Electrician") Electrician
-											option(value="Engineer") Engineer
-											option(value="Farmer") Farmer
-											option(value="Geologist") Geologist
-											option(value="Landscaper") Landscaper
-											option(value="Lawyer/Real Estate Agent") Lawyer/Real Estate Agent
-											option(value="Machine Operator/Contractor") Machine Operator/Contractor
-											option(value="Plumber") Plumber
-											option(value="Town Planner/Surveyor") Town Planner/Surveyor
-											option(value="Utility Employee") Utility Employee
-											option(value="Other") Other
-								.form-actions
-									button.btn.btn-primary(type="submit", value="Register") Register
-						div#login.tab-pane
-							- if ('undefined' !== typeof errors && errors.length)
-							ul.errors
-								- each error in errors
-									li.error=error
-							form.form-horizontal(method="POST", action="/login")
-								fieldset
-									legend Enter your email address and password to login
-									.control-group
-										label.control-label(for="email") Email Address
-										.controls
-											input#emailAddress.input-xlarge(type="email", name="email", required="required")
-									.control-group
-										label.control-label(for="password") Password
-										.controls
-											input#password(type="password", name="password", required="required")
-									.form-actions
-										button.btn.btn-primary(type="submit", value="Login") Login
-										p
-										a(href='/forgotpassword') Forgot Password?
+					- if ('undefined' !== typeof errors && errors.length)
+					ul.errors
+						- each error in errors
+							li.error=error
+					form.form-horizontal(method="POST", action="/login")
+						fieldset
+							legend Enter your email address and password to login
+							.control-group
+								label.control-label(for="email") Email Address
+								.controls
+									input#emailAddress.input-xlarge(type="email", name="email", required="required")
+							.control-group
+								label.control-label(for="password") Password
+								.controls
+									input#password(type="password", name="password", required="required")
+							.form-actions
+								button.btn.btn-primary(type="submit", value="Login") Login
+								p
+								a(href='/forgotpassword') Forgot Password?
+								p
+								a(href='/register') Register
 				
 	!=partial('footer')
 script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
