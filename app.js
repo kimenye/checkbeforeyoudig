@@ -22,10 +22,10 @@ var confirmUrl = CONFIG.url + "/confirm?token=";
 var website = CONFIG.url;
 
 
-/*
+
 everyauth.everymodule.findUserById(function (userId, callback) {
     data.findUserById(userId, callback);
-});*/
+});
 
 
 everyauth.password
@@ -118,7 +118,12 @@ everyauth.password
 		return promise;
 	})
     .loginSuccessRedirect('/home')
-    .registerSuccessRedirect('/registered');
+    .registerSuccessRedirect('/registered')
+	.findUserById( function (userId, callback) {
+	  // User.findById(userId, callback);
+	  // callback has the signature, function (err, user) {...}
+	  console.log("Called the find user by id method");
+	});
 
 
 
@@ -140,7 +145,7 @@ app.configure(function() {
 	app.use(express.static(__dirname + '/public'));
 });
 
-everyauth.debug = true;
+everyauth.debug = false;
 everyauth.helpExpress(app);
 
 app.configure('development', function() {
@@ -301,8 +306,7 @@ app.post('/savesearch', function(req, res) {
 	//var user = new User();
 	//user = req.user;
 	data.saveEnquiry(function(enquiry) {
-		console.log(enquiry);
-		console.log("saved");
+		console.log("saved enquiry " + req.param('enquiry') + " for " + req.user);
 		res.send("ok");
 	}, req.user, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
 });

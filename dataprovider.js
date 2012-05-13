@@ -41,12 +41,12 @@ DataProvider = function() {
  */
 DataProvider.prototype.findUserById = function(userId, callback) {
 	User.findOne({
-		id : userId
+		_id : userId
 	}, function(error, user) {
 		if(error) {
 			callback(error);
 		} else {
-			callback(user);
+			callback(null, user);
 		}
 	});
 };
