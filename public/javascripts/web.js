@@ -18,7 +18,8 @@ $(document).ready(function() {
 	 */
 	var drawingManager = new google.maps.drawing.DrawingManager({
 		drawingControlOptions: {
-			drawingModes: [google.maps.drawing.OverlayType.POLYGON, google.maps.drawing.OverlayType.RECTANGLE], //google.maps.drawing.OverlayType.CIRCLE],
+			drawingModes: [google.maps.drawing.OverlayType.POLYGON],// google.maps.drawing.OverlayType.RECTANGLE], //google.maps.drawing.OverlayType.CIRCLE],
+			
 			position: google.maps.ControlPosition.TOP_RIGHT
 		}
 	});
