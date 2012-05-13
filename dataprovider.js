@@ -37,6 +37,20 @@ var User = mongoose.model('User', UserSchema);
 DataProvider = function() {
 };
 /**
+ * Find a user by providing their id
+ */
+DataProvider.prototype.findUserById = function(userId, callback) {
+	User.findOne({
+		id : userId
+	}, function(error, user) {
+		if(error) {
+			callback(error);
+		} else {
+			callback(user);
+		}
+	});
+};
+/**
  * Find a user by providing their email address
  */
 DataProvider.prototype.findUserByEmail = function(callback, email) {

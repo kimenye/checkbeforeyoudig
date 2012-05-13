@@ -1,12 +1,9 @@
-//STILL A WORK IN PROGRESS: LOGIN NOT HAPPENING CORRECTLY
-//Committed so I can pull it at work
-
-
 /**
  * Module dependencies.
  */
 
 var express = require('express'), routes = require('./routes'), everyauth = require('everyauth');
+var Promise = everyauth.Promise;
 
 var app = module.exports = express.createServer();
 var CONFIG = require('config').Environment;
@@ -25,6 +22,12 @@ var confirmUrl = CONFIG.url + "/confirm?token=";
 var website = CONFIG.url;
 
 
+/*
+everyauth.everymodule.findUserById(function (userId, callback) {
+    data.findUserById(userId, callback);
+});*/
+
+
 everyauth.password
   	.extractExtraRegistrationParams( function (req) {
   		return {
@@ -33,15 +36,15 @@ everyauth.password
   		};
 	})
     .loginWith('email')
-    .getLoginPath('/signin')
+    .getLoginPath('/')
     .postLoginPath('/login')
     .loginLocals({
      	title : CONFIG.name,
-     	errors: new Array()
+     	errors: []
   	})
     .loginView('index.jade')
     .authenticate(function(email, password) {
-		var errors = new Array();
+		var errors = [];
 		if(!email)
 			errors.push('Missing email');
 		if(!password) {
@@ -50,35 +53,7 @@ everyauth.password
 		if(errors.length) {
 			return errors;
 		}
-		var newUser = new User();
-		
-		data.findUserByEmail(function(user) {
-			if(user) {
-				if(user.password === password) {
-					newUser = user;
-				} else {
-					errors.push('Incorrect username/password combination');
-				}
-			}
-			else {
-				errors.push('Incorrect username/password combination');
-			}
-	
-		}, email);
 
-		if(!newUser || errors.length) {
-			return errors;
-		}
-		else {
-			return newUser;
-		}
-			
-		// if (usersByLogin[login] && usersByLogin[login].password === password) {
-    //   return usersByLogin[login];
-    // } else {
-    //   return ['Login failed'];
-    // }
-/*
 		var promise = this.Promise();
 		data.findUserByEmail(function(user) {
 			if(user && user.password === password) {
@@ -87,9 +62,9 @@ everyauth.password
 				return promise.fulfill(["Incorrect username/password combination"]);
 			}
 		}, email);
-		return promise;*/
+		return promise;
 	})
-    .getRegisterPath('/join')
+    .getRegisterPath('/register')
     .postRegisterPath('/register')
     .registerLocals({
      	title : CONFIG.name,
@@ -122,8 +97,7 @@ everyauth.password
 		}
 
 		console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
-		//var promise = this.Promise();
-		var errors = new Array();
+		var promise = this.Promise();
 		data.createUser(function(user) {
 			if(user) {
 				// Send an email to the user. Temporarily disabled this so as not to run it twice
@@ -134,15 +108,14 @@ everyauth.password
 			}
 			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
 			
-			return user;
-			//promise.fulfill(user);
+			promise.fulfill(user);
 			}
 			else {
-				errors.push('Email already registered');
+				return promise.fulfill(["Email already registered"]);
 			}
 			
 		}, emailAddress, occupation, token, name);
-		return errors;
+		return promise;
 	})
     .loginSuccessRedirect('/home')
     .registerSuccessRedirect('/registered');
@@ -301,11 +274,11 @@ app.get('/register', function(req, res) {
 app.post('/forgotpassword', function(req, res) {
 	data.findUserByEmail(function(user) {
 		if(user) {
-			if (!CONFIG.test) {
+			//if (!CONFIG.test) {
 				var subject = "Dial Before you Dig Password Reset";
 				var message = emailMessage.getPasswordResetEmail(user);
 				mailer.sendEmail(user, subject, message);
-			}
+			//}
 					res.render('passwordreset', {
 						title : CONFIG.name,
 						layout : 'layout'
@@ -325,11 +298,13 @@ app.post('/forgotpassword', function(req, res) {
  * Saves a users search parameters
  */
 app.post('/savesearch', function(req, res) {
+	//var user = new User();
+	//user = req.user;
 	data.saveEnquiry(function(enquiry) {
 		console.log(enquiry);
 		console.log("saved");
 		res.send("ok");
-	}, everyauth.user, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
+	}, req.user, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
 });
 
 
