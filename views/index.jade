@@ -1,35 +1,35 @@
 !=partial('header')
 .container
-	.row-fluid
-		.hero-unit
-			.row
-				h2 Check Before You Dig
-					small &nbsp;Free Information on underground pipes
-			.row
-				.span6
-					- if ('undefined' !== typeof errors && errors.length)
-					ul.errors
-						- each error in errors
-							li.error=error
-					form.form-horizontal(method="POST", action="/login")
-						fieldset
-							legend Enter your email address and password to login
-							.control-group
-								label.control-label(for="email") Email Address
-								.controls
-									input#emailAddress.input-xlarge(type="email", name="email", required="required")
-							.control-group
-								label.control-label(for="password") Password
-								.controls
-									input#password(type="password", name="password", required="required")
-							.form-actions
-								button.btn.btn-primary(type="submit", value="Login") Login
-								p
-								a(href='/forgotpassword') Forgot Password?
-								p
-								a(href='/register') Register
-				
-	!=partial('footer')
+    .row-fluid
+        .hero-unit
+            .row
+                h2 Check Before You Dig
+                    small &nbsp;Free Information on underground pipes
+            .row
+                .span6
+                    - if ('undefined' !== typeof errors && errors.length)
+                        - each error in errors
+                            div.alert
+                                strong= error
+                    form.form-horizontal(method="POST", action="/login")
+                        fieldset
+                            legend Enter your email address and password to login
+                            .control-group
+                                label.control-label(for="email") Email Address
+                                .controls
+                                    input#emailAddress.input-xlarge(type="email", name="email", required="required")
+                            .control-group
+                                label.control-label(for="password") Password
+                                .controls
+                                    input#password(type="password", name="password", required="required")
+                            .form-actions
+                                button.btn.btn-primary(type="submit", value="Login") Login
+                                p
+                                a(href='/forgotpassword') Forgot Password?
+                                p
+                                a(href='/register') Register
+
+    !=partial('footer')
 script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
 script(type='text/javascript', src='http://maps.google.com/maps/api/js?sensor=false')
 script(type='text/javascript', src='javascripts/bootstrap.min.js')

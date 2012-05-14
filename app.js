@@ -29,103 +29,93 @@ everyauth.everymodule.findUserById(function (userId, callback) {
 
 
 everyauth.password
+    .loginWith('email')
+    .getLoginPath('/login')
+    .postLoginPath('/login')
+    .loginView('index.jade')
+    .loginLocals({
+        title : CONFIG.name
+    })
+    .authenticate(function(email, password) {
+        var errors = [];
+        if(!email)
+            errors.push('Missing email');
+        if(!password) {
+            errors.push('Missing password');
+        }
+        if(errors.length) {
+            return errors;
+        }
+
+        var promise = this.Promise();
+        data.findUserByEmail(function(user) {
+            if(user && user.password === password) {
+                promise.fulfill(user);
+            } else {
+                return promise.fulfill(["Incorrect username/password combination"]);
+            }
+        }, email);
+        return promise;
+    })
+    .getRegisterPath('/register')
+    .postRegisterPath('/register')
+    .registerView('register.jade')
+    .registerLocals({
+        title : CONFIG.name
+    })
   	.extractExtraRegistrationParams( function (req) {
   		return {
       		occupation: req.body.occupation,
 			fullName : req.body.fullName
   		};
 	})
-    .loginWith('email')
-    .getLoginPath('/')
-    .postLoginPath('/login')
-    .loginLocals({
-     	title : CONFIG.name,
-     	errors: []
-  	})
-    .loginView('index.jade')
-    .authenticate(function(email, password) {
-		var errors = [];
-		if(!email)
-			errors.push('Missing email');
-		if(!password) {
-			errors.push('Missing password');
-		}
-		if(errors.length) {
-			return errors;
-		}
-
-		var promise = this.Promise();
-		data.findUserByEmail(function(user) {
-			if(user && user.password === password) {
-				promise.fulfill(user);
-			} else {
-				return promise.fulfill(["Incorrect username/password combination"]);
-			}
-		}, email);
-		return promise;
-	})
-    .getRegisterPath('/register')
-    .postRegisterPath('/register')
-    .registerLocals({
-     	title : CONFIG.name,
-     	errors: []
-  	})
-    .registerView('register.jade')
     .validateRegistration( function (newUserAttrs, errors) {
-		console.log('Validate the registration')
-		//TODO: This is a workaround
-		//we should already be having all the parameters we need.
-		//therefore we should clear the validation
-		errors.splice(0,errors.length);
-		return errors;
+        //TODO: This is a workaround
+        //we should already be having all the parameters we need.
+        //therefore we should clear the validation
+        errors.splice(0,errors.length);
+        return errors;
     })
     .registerUser(function(newUserAttrs) {
-		console.log('Creating new user')
-		var emailAddress = newUserAttrs.email;
-		var occupation = newUserAttrs.occupation;
-		var name = newUserAttrs.fullName;
-		
-		var token = generateUUID();
-		function generateUUID() {
-			var d = new Date().getTime();
-			var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-				var r = (d + Math.random() * 16) % 16 | 0;
-				d = d / 16 | 0;
-				return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
-			});
-			return uuid;
-		}
+        console.log('Creating new user')
+        var emailAddress = newUserAttrs.email;
+        var occupation = newUserAttrs.occupation;
+        var name = newUserAttrs.fullName;
 
-		console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
-		var promise = this.Promise();
-		data.createUser(function(user) {
-			if(user) {
-				// Send an email to the user. Temporarily disabled this so as not to run it twice
-			if (!CONFIG.test) {
-				var subject = "Dial Before you Dig Registration Confirmation";
-				var message = emailMessage.getActivationEmail(user);
-				mailer.sendEmail(user, subject, message);
-			}
-			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
-			
-			promise.fulfill(user);
-			}
-			else {
-				return promise.fulfill(["Email already registered"]);
-			}
-			
-		}, emailAddress, occupation, token, name);
-		return promise;
-	})
+        var token = generateUUID();
+        function generateUUID() {
+            var d = new Date().getTime();
+            var uuid = 'xxxxxxxxxxxx4xxxyxxxxxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                var r = (d + Math.random() * 16) % 16 | 0;
+                d = d / 16 | 0;
+                return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+            });
+            return uuid;
+        }
+
+        console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
+        var promise = this.Promise();
+        data.createUser(function(user) {
+            if(user) {
+                // Send an email to the user. Temporarily disabled this so as not to run it twice
+                if (!CONFIG.test) {
+                    var subject = "Dial Before you Dig Registration Confirmation";
+                    var message = emailMessage.getActivationEmail(user);
+                    mailer.sendEmail(user, subject, message);
+                }
+                console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
+
+                promise.fulfill(user);
+            }
+            else {
+                return promise.fulfill(["Email already registered"]);
+            }
+
+        }, emailAddress, occupation, token, name);
+        return promise;
+    })
     .loginSuccessRedirect('/home')
-    .registerSuccessRedirect('/registered')
-	.findUserById( function (userId, callback) {
-	  // User.findById(userId, callback);
-	  // callback has the signature, function (err, user) {...}
-	  console.log("Called the find user by id method");
-	});
-
-
+    .registerSuccessRedirect('/registered');
 
 // Configuration
 app.configure(function() {
