@@ -152,7 +152,7 @@ var EnquirySchema = new Schema({
 	enquiryType: {
 		type : Number
 	},
-	searchType : {
+	searchTerm : {
 		type : String
 	},
 	typeOfWork : {

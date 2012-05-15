@@ -97,6 +97,7 @@ $(document).ready(function() {
 				enquiryType = EnquiryType.searchByName;
 				typeOfWork = $('#sel_type').val();
 				searchTerm = text;
+				cstmArea = null;
 				
 				search(text);
 			}
@@ -106,6 +107,7 @@ $(document).ready(function() {
 				enquiryType = EnquiryType.searchByCustomArea;
 				typeOfWork = $('#sel_type').val();
 				cstmArea = selectedItem;
+				searchTerm = null;
 
 				searchBounds(selectedItem.getBounds(), text);
 			}
@@ -304,6 +306,8 @@ $(document).ready(function() {
 		$('#pan_result').click(function() {
 			map.fitBounds(bounds);
 		});
+		
+		selectedItem = null; // After the first custom area search, the search info was persisting and was getting saved everytime a search was done
 	}
 	
 	
