@@ -69,12 +69,8 @@ function testDeleteUser() {
 }
 
 function testFindUsersLastFiveQueries() {
-	data.findUserByEmail(function(user) {
-		console.log(user);
-
-		data.findUsersLastFiveQueries(function(enquiry) {
-			console.log(enquiry);
-		}, user);
+	data.findUsersLastFiveQueries(function(enquiry) {
+		console.log(enquiry);
 	}, "jokhessa@yahoo.com");
 }
 
