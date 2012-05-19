@@ -189,6 +189,21 @@ DataProvider.prototype.saveEnquiry = function(callback, user, enquiryType, searc
 
 };
 
+/**
+ * Find a user's last 5 saved search results
+ */
+DataProvider.prototype.findUsersLastFiveQueries = function(callback, user) {
+	Enquiry.find({
+		user : user
+	}, function(error, enquiry) {
+		if(error) {
+			callback(error);
+		} else {
+			callback(enquiry);
+		}
+	}).sort({_id:-1}).limit(5);
+};
+
 
 exports.DataProvider = DataProvider;
 exports.User = User;

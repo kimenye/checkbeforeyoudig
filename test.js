@@ -5,6 +5,7 @@ var data = new DataProvider();
 var email = "test@kimenye.com";
 var occupation = "Developer";
 var token = "db07ddd580fa4f67a3f4fdcd8c21137c";
+var name = "Jane Doe";
 
 /**
  * Creates a user
@@ -12,11 +13,11 @@ var token = "db07ddd580fa4f67a3f4fdcd8c21137c";
 function testCreateUser() {
 	data.createUser(function(user) {
 		if(user) {
-			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
-		} else {
-			console.log("Error creating user");
-		}
-	}, email, occupation, token);
+					console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
+				} else {
+					console.log("Error creating user");
+				}
+	}, email, occupation, token, name);
 }
 
 /**
@@ -25,31 +26,31 @@ function testCreateUser() {
 function testCreateUserAgain() {
 	data.createUser(function(user) {
 		if(user) {
-			console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
-		} else {
-			console.log("Error creating user");
-		}
-	}, email, occupation, token);
+					console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + "Token: " + token);
+				} else {
+					console.log("Error creating user");
+				}
+	}, email, occupation, token, name);
 }
 
 function testFindUserByEmail() {
 	data.findUserByEmail(function(user) {
 		if(user && user.emailAddress === email) {
-			console.log("Find by email: User found");
-		} else {
-			console.log("Find by email: User not found");
-		}
+					console.log("Find by email: User found");
+				} else {
+					console.log("Find by email: User not found");
+				}
 	}, email);
 }
 
 function testFindUserByToken() {
 	data.findUserByToken(function(user) {
 		console.log(token);
-		if(user && user.token === token) {
-			console.log("Find by token: User found");
-		} else {
-			console.log("Find by token: User not found");
-		}
+				if(user && user.token === token) {
+					console.log("Find by token: User found");
+				} else {
+					console.log("Find by token: User not found");
+				}
 	}, token);
 }
 
@@ -67,9 +68,21 @@ function testDeleteUser() {
 	}, email);
 }
 
-testCreateUser();
-testCreateUserAgain();
-testFindUserByEmail();
-testFindUserByToken();
-testUpdateUser();
-testDeleteUser();
+function testFindUsersLastFiveQueries() {
+	data.findUserByEmail(function(user) {
+		console.log(user);
+
+		data.findUsersLastFiveQueries(function(enquiry) {
+			console.log(enquiry);
+		}, user);
+	}, "jokhessa@yahoo.com");
+}
+
+
+//testCreateUser();
+//testCreateUserAgain();
+//testFindUserByEmail();
+//testFindUserByToken();
+//testUpdateUser();
+//testDeleteUser();
+testFindUsersLastFiveQueries();
