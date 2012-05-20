@@ -193,15 +193,16 @@ DataProvider.prototype.saveEnquiry = function(callback, emailAddress, enquiryTyp
  * Find a user's last 5 saved search results
  */
 DataProvider.prototype.findUsersLastFiveQueries = function(callback, emailAddress) {
-	Enquiry.find({
-		userEmailAddress : emailAddress
-	}, function(error, enquiry) {
-		if(error) {
-			callback(error);
-		} else {
-			callback(enquiry);
-		}
-	}).sort({_id:-1}).limit(5);
+    var query = Enquiry.find({});
+    query.where('userEmailAddress', emailAddress);
+    query.limit(5);
+    query.exec(function (err, docs) {
+        if(err) {
+            callback(err);
+        } else {
+            callback(docs);
+        }
+    });
 };
 
 

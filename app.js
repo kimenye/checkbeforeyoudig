@@ -93,7 +93,6 @@ everyauth.password
             return uuid;
         }
 
-        console.log('Email Address is ' + emailAddress + '\nOccupation is ' + occupation + '\ntoken is ' + token);
         var promise = this.Promise();
         data.createUser(function(user) {
             if(user) {
@@ -103,8 +102,6 @@ everyauth.password
                     var message = emailMessage.getActivationEmail(user);
                     mailer.sendEmail(user, subject, message);
                 }
-                console.log("Created : " + user.emailAddress + " Occupation: " + user.occupation + " Token: " + token);
-
                 promise.fulfill(user);
             }
             else {
@@ -164,14 +161,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/home', function(req, res) {
-//	if (!req.loggedIn) {
-//		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
-//	}
-//	else
-//	{
-//		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
-//	}
-    res.render('home', { title: CONFIG.name, layout: 'layout_full'})
+	if (!req.loggedIn) {
+		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
+	}
+	else
+	{
+		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
+	}
 });
 
 app.get('/test', function(req, res) {
@@ -290,6 +286,13 @@ app.post('/forgotpassword', function(req, res) {
 	}, req.param('email'));
 });
 
+
+app.get('/searches', function(req, res) {
+    data.findUsersLastFiveQueries(function(enquiries) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify(enquiries));
+    }, req.user.emailAddress);
+});
 
 /**
  * Saves a users search parameters

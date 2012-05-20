@@ -6,6 +6,10 @@
 				ul.nav
 					li
 						a(href="#") Home
+					li
+						a(href="#about-box", data-toggle="modal") About
+					li
+						a(href="#previous", data-toggle="modal") Previous Searches
 				ul.nav.pull-right
 					li
 						a(href='/logout') Logout
@@ -28,14 +32,71 @@
 						input.btn.btn-primary(type="button", data-bind="click: doSearch, enable: searchTerm() != null && searchResult() == null", value="Search")
 						&nbsp;
 						input.btn(data-bind="click: clearSearch, enable: searchResult() != null || isCustomAreaSearch()", type="button", value="Clear")
+			fieldset(data-bind="visible: searchResult() != null")
+				legend(data-bind="text: (searchResult()? searchResult().pipes().length : \"0\") + \" Results\"")
+				br
+				table.table.table-bordered(data-bind="with: searchResult()")
+					thead
+						th Id
+						th Material
+						th Length
+					tbody(data-bind="foreach: pipes")
+						tr
+							td(data-bind="text: OBJECTID")
+							td(data-bind="text: Material")
+							td(data-bind="text: PLength")
+
+
+
 		.span9#map_canvas.map
 
+#previous.modal.hide
+	.modal-header
+		button.close(data-dismiss="modal") x
+		h3 Previous Searches
+	.modal-body
+		p "Check before you dig &reg;" saves your last 5 queries. You can replay any of them by clicking on the search results.
+		table.table.table-bordered
+			thead
+				th Date
+				th Type of Work
+				th Type of Search
+				th Search Location
+			tbody(data-bind="foreach: previousSearches()")
+				tr
+					td(data-bind="text: dateOfEnquiry")
+					td(data-bind="text: typeOfWork")
+					td(data-bind="text: enquiryType")
+					td(data-bind="text: searchTerm")
 
 
+#about-box.modal.hide
+	.modal-header
+		button.close(data-dismiss="modal") x
+		h3 Check Before you dig &reg;
+	.modal-body
+		p "Check before you dig" is a service that allows public infrastructure contractors to know what underground assets (e.g. water and gas pipes) or overhead assets (e.g. electricity and communication cables) may be affected by their work
+		p There are two was to search using the system, by the 'Location Name' and by using your mouse to select a 'Custom Area'
+
+		h5 SEARCH BY NAME
+			ol
+				li Enter this location you will be searching for in the 'Where' field. e.g. Changamwe
+					img(src='/images/help_where.png', style='width:500px')
+				li Click the 'Search' button
+					img(src='/images/help_search.png', style='width:500px')
+				li Results are displayed on a sidebar on the left.
+				li Use the clear button to reset.
+
+		h5 SEARCH BY CUSTOM AREA
+			ol
+				li Select the 'Custom Area' using the drawing tool on the top right.
+					img(src='/images/help_tools.png', style='height:70px')
+				li Draw the shape. Either a polygon or rectangle
+				li Click the 'Search' button.
 
 script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
+script(type='text/javascript', src='javascripts/date.js')
 script(type='text/javascript', src='javascripts/bootstrap.min.js')
 script(type='text/javascript', src='javascripts/knockout.js')
 script(type='text/javascript', src='http://maps.google.com/maps/api/js?sensor=false&libraries=drawing')
 script(type='text/javascript', src='javascripts/web.js')
-script(type='text/javascript', src='javascripts/GeoJSON.js')

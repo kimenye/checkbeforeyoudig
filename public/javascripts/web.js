@@ -26,7 +26,12 @@ $(document).ready(function() {
         }
     }
 
-    function getPolylineToSave(usrPath) {
+    /**
+     * Convert the custom area into an object we can save
+     * @param usrPath
+     * @return {*}
+     */
+    function getLinesToSave(usrPath) {
         if (usrPath && usrPath.getPaths()) {
             var pts = [];
 
@@ -39,10 +44,21 @@ $(document).ready(function() {
         return null;
     }
 
+    /**
+     * Result object
+     * @param bounds
+     * @constructor
+     */
     function Result(bounds) {
-        this.bounds = bounds;
+        var me = this;
+        me.bounds = bounds;
+        me.pipes = ko.observableArray([]);
     }
 
+    /**
+     * KnockoutJS VM
+     * @constructor
+     */
 	function ViewModel() {
 		var self = this;
         var map, geocoder, startingPosition, rectangle;
@@ -66,28 +82,34 @@ $(document).ready(function() {
         })
 
         self.doSearch = function() {
-            geocoder.geocode( { 'address' : self.searchTerm() + ', Mombasa'}, function(results,status) {
-                if (status == google.maps.GeocoderStatus.OK) {
-                    var point = results[0].geometry;
-                    rectangle = new google.maps.Rectangle({ bounds: point.viewport });
-                    rectangle.setMap(map);
-                    map.fitBounds(point.viewport);
-                    self.searchBounds(point.viewport);
-                }
-                else
-                {
-                    console.log("Geocode was not successful for the following reason: " + status);
-                }
-            });
+            if (!self.isCustomAreaSearch()) {
+                geocoder.geocode( { 'address' : self.searchTerm() + ', Mombasa'}, function(results,status) {
+                    if (status == google.maps.GeocoderStatus.OK) {
+                        var point = results[0].geometry;
+                        rectangle = new google.maps.Rectangle({ bounds: point.viewport });
+                        rectangle.setMap(map);
+                        map.fitBounds(point.viewport);
+                        self.searchBounds(point.viewport);
+                    }
+                    else
+                    {
+                        console.log("Geocode was not successful for the following reason: " + status);
+                    }
+                });
+            }
+            else {
+                self.searchBounds(self.polygon().getBounds());
+            }
         };
 
         self.clearSearch = function() {
-            console.log("Performing search");
+            self.detach(self.polygon());
             self.polygon(null);
             self.searchTerm(null);
             self.searchResult(null);
-            rectangle.setMap(null);
-
+            self.detach(rectangle);
+            self.detach(pipesLayer);
+            drawingManager.setDrawingMode(null);
             map.fitBounds(startingPosition.viewport);
         };
 
@@ -105,8 +127,15 @@ $(document).ready(function() {
          * Event listener for when a polygon is completed
          */
         google.maps.event.addListener(drawingManager, 'polygoncomplete', function(polygon) {
+            //remove the old polygon if its still there
+            self.detach(self.polygon());
             self.polygon(polygon);
         });
+
+        self.detach = function(item) {
+            if (item != null)
+                item.setMap(null);
+        }
 
         self.polygon.subscribe(function(newValue) {
             self.searchTerm("Custom Area");
@@ -128,13 +157,42 @@ $(document).ready(function() {
                     enquiryType : self.enquiryType(),
                     searchTerm : self.searchTerm(),
                     typeOfWork : self.typeOfWork(),
-                    customArea : getPolylineToSave(self.polygon())
+                    customArea : getLinesToSave(self.polygon())
                 }
             });
+            self.loadOverlays(bounds);
         }
 
         self.searchCustom = function() {
-            map.fitBounds(self.polygon().getBounds());
+            if (self.polygon() != null)
+                map.fitBounds(self.polygon().getBounds());
+        }
+
+        self.loadOverlays = function(bounds) {
+            var rect = 'RECTANGLE(LATLNG(' + bounds.getSouthWest().lat() + ',' + bounds.getSouthWest().lng() +'), LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'))';
+            var where = 'ST_INTERSECTS(geometry,' + rect + ')';
+
+            pipesLayer = new google.maps.FusionTablesLayer({
+                query: {
+                    select: 'geometry',
+                    where: where,
+                    from: Data.PIPES_TABLE
+                }
+            });
+            pipesLayer.setMap(map);
+
+            var pipeSQL = 'select OBJECTID, DIAMETER,Material,PLength from ' + Data.PIPES_TABLE + ' where ' + where;
+            $.ajax({
+                type: "GET",
+                url: "http://ft2json.appspot.com/q?sql=" + pipeSQL,
+                dataType: "json",
+                success: function(data) {
+                    if (data.data) {
+                        var dt = data.data;
+                        self.searchResult().pipes(data.data);
+                    }
+                }
+            });
         }
 
         self.initMap = function() {
@@ -165,144 +223,15 @@ $(document).ready(function() {
             });
         };
         self.initMap();
+
+        self.getPreviousSearches = function() {
+            $.getJSON("searches", function(data) {
+//               debugger;
+                self.previousSearches(data);
+            });
+        };
+        self.getPreviousSearches();
 	}
 
 	ko.applyBindings(new ViewModel());
-
-
-	/**
-	 * Load the overlays
-	 */
-	function loadOverlays(bounds) {		
-		var rect = 'RECTANGLE(LATLNG(' + bounds.getSouthWest().lat() + ',' + bounds.getSouthWest().lng() +'), LATLNG(' + bounds.getNorthEast().lat() + ',' + bounds.getNorthEast().lng() +'))';
-		var where = 'ST_INTERSECTS(geometry,' + rect + ')';
-		
-		pipesLayer = new google.maps.FusionTablesLayer({
-			query: {
-				select: 'geometry',
-				where: where,
-				from: PIPES_TABLE
-			}
-		});
-		pipesLayer.setMap(map);
-		
-		var pipeSQL = 'select OBJECTID, DIAMETER,Material,PLength from ' + PIPES_TABLE + ' where ' + where;
-		$.ajax({
-			type: "GET",
-			url: "http://ft2json.appspot.com/q?sql=" + pipeSQL,
-			dataType: "json",
-			success: function(data) {
-//				$('#affected_pipes').html(data.count + " Pipes Affected");
-				if (data.data) {
-					var dt = data.data;
-					var html = '<table id="table_pipes"><thead><th>Id</th><th>Material</th><th>Length</th></thead><tbody>';
-					for(var idx=0;idx<data.data.length;idx++) {
-						html += '<tr><td>' + dt[idx].OBJECTID + '</td>' + '<td>' + dt[idx].Material + '</td><td>' + Math.round(dt[idx].PLength) + '</td></tr>';
-					}
-					html += '</tbody></html>';
-					$('#pipes').html(html);
-					$('#table_pipes').dataTable({
-					        "bPaginate": false,
-					        "bLengthChange": false,
-					        "bFilter": false,
-					        "bSort": false,
-					        "bInfo": false,
-					        "bAutoWidth": false
-					    });
-					// $('#searches').resize();
-				}
-			}
-		});
-		
-		zonesLayer = new google.maps.FusionTablesLayer({
-			query: {
-				select: 'geometry',
-				where: where,
-				from: ZONES_TABLE
-			}
-		});
-		
-		var zoneSQL = 'select Main_Area,Book_Name,Id from ' + ZONES_TABLE + ' where ' + where;
-		$.ajax({
-			type: "GET",
-			url: "http://ft2json.appspot.com/q?sql=" + zoneSQL,
-			dataType: "json",
-			success: function(data) {
-				$('#affected_zones').html(data.count + " Zones Affected");
-				if (data.data) {
-					var dt = data.data;
-					var html = '<table id="table_zones"><thead><th>Id</th><th>Area</th></thead><tbody>';
-					for(var idx=0;idx<data.data.length;idx++) {
-						html += '<tr><td>' + dt[idx].Id + '</td>' + '<td>' + dt[idx].Main_Area + '</td></tr>';
-					}
-					html += '</tbody></html>';
-					$('#zones').html(html);
-					$('#table_zones').dataTable({
-					        "bPaginate": false,
-					        "bLengthChange": false,
-					        "bFilter": false,
-					        "bSort": false,
-					        "bInfo": false,
-					        "bAutoWidth": false
-					    });
-					// $('#searches').resize();
-				}
-			}
-		});
-		
-		zonesLayer.setMap(map);
-	}
-	
-
-	
-
-	
-	
-
-	
-	
-	/**
-	 * Invalidate a map object
-	 */
-	function invalidate(obj,dontNullify) {
-		if (obj) {
-			obj.setMap(null);
-			if (dontNullify)
-				obj = null;
-		}
-	}
-	
-	/**
-	 * Deactivate when we are performing a search
-	 */
-	function deactivate() {
-		invalidate(drawingManager, true);
-		
-		$('#no-searches').addClass('hide');					
-		// $('#searches').resize();
-		$('#txt_where').attr('disabled','disabled');
-		$('#btn_submit').button( "option", "disabled", true );
-		$('#btn_clear').button( "option", "disabled", false );
-	}
-	
-	/**
-	 * Reset the search
-	 */
-	function reset() {
-		invalidate(rectangle);
-		invalidate(zonesLayer);
-		invalidate(pipesLayer);
-		invalidate(selectedItem);
-		invalidate(cstmArea);
-		drawingManager.setMap(map);
-
-
-	}
-	
-	function test() {
-		$('#txt_where').val('Changamwe');
-		//$('#dialog').dialog('open');
-	}
-	//test();
-	
 });
