@@ -146,8 +146,8 @@ DataProvider.prototype.deleteUser = function(callback, email) {
  * Enquiry Schema
  */
 var EnquirySchema = new Schema({
-	user: {
-		type: Schema.Types.Mixed
+	userEmailAddress: {
+		type: String
 	},
 	enquiryType: {
 		type : Number
@@ -174,10 +174,10 @@ var Enquiry = mongoose.model('Enquiry', EnquirySchema);
 /**
  * Saves an enquiry
  */
-DataProvider.prototype.saveEnquiry = function(callback, user, enquiryType, searchTerm, typeOfWork, dateOfEnquiry, customArea) {
+DataProvider.prototype.saveEnquiry = function(callback, emailAddress, enquiryType, searchTerm, typeOfWork, dateOfEnquiry, customArea) {
 
 	var enquiry = new Enquiry();
-	enquiry.user = user;
+	enquiry.userEmailAddress = emailAddress;
 	enquiry.enquiryType = enquiryType;
 	enquiry.searchTerm = searchTerm;
 	enquiry.typeOfWork = typeOfWork;
@@ -192,9 +192,9 @@ DataProvider.prototype.saveEnquiry = function(callback, user, enquiryType, searc
 /**
  * Find a user's last 5 saved search results
  */
-DataProvider.prototype.findUsersLastFiveQueries = function(callback, user) {
+DataProvider.prototype.findUsersLastFiveQueries = function(callback, emailAddress) {
 	Enquiry.find({
-		user : user
+		userEmailAddress : emailAddress
 	}, function(error, enquiry) {
 		if(error) {
 			callback(error);

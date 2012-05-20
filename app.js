@@ -295,12 +295,10 @@ app.post('/forgotpassword', function(req, res) {
  * Saves a users search parameters
  */
 app.post('/savesearch', function(req, res) {
-	//var user = new User();
-	//user = req.user;
 	data.saveEnquiry(function(enquiry) {
 		console.log("saved enquiry " + req.param('enquiry') + " for " + req.user);
 		res.send("ok");
-	}, req.user, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
+	}, req.user.emailAddress, req.param('enquiryType'), req.param('searchTerm'), req.param('typeOfWork'), new Date(), req.param('customArea'));
 });
 
 
