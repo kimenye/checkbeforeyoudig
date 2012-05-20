@@ -160,16 +160,18 @@ app.get('/', function (req, res) {
 	{
 		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
 	}
+
 });
 
 app.get('/home', function(req, res) {
-	if (!req.loggedIn) {
-		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
-	}
-	else
-	{
-		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
-	}
+//	if (!req.loggedIn) {
+//		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
+//	}
+//	else
+//	{
+//		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
+//	}
+    res.render('home', { title: CONFIG.name, layout: 'layout_full'})
 });
 
 app.get('/test', function(req, res) {

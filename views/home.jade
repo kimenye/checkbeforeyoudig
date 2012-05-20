@@ -1,63 +1,41 @@
-#map_canvas.map
-#header.light.shadow.rounded
-	#where_holder.holder.left
-		label.strong(for='txt_where') Where
-		input#txt_where(name='txt_where', placeholder='e.g. Changamwe', value='')
-	#type_holder.holder.left
-		label.strong(for='sel_type') Type of Work
-		select#sel_type(name: "sel_type")
-			option(value='excavation') Excavation
-			option(value='overhead-repairs') Overhead Repairs
-	#button_holder.holder.left
-		a#btn_submit.link_button(href='#') Search
-	#button_hoder.holder.left
-		a#btn_clear.link_button(href='#') Clear
-	#help
-		span#help_image.ui-icon.ui-icon-help.left
-		a#btn_help(href='#') Help
-		#logout
-			a(href='/logout') Logout
-#sidebar.light.shadow.rounded.hide
-	#accordion
-		.results
-			h4 
-				a(href='#') My Results
-			.search
-				ul#searches.searches
-					li#no-searches
-						span No Searches
-					li.hide
-						a(href='#')
-							span Changamwe
-						a.ui-icon.ui-icon-trash.right(href='#')
-				#result_tabs
-					ul
-						li
-							a(href="#tab-pipes") Affected Assets
-						li
-							a(href="#tab-zones") Zones
-					#tab-pipes
-						h5#affected_pipes
-						#pipes 
-					#tab-zones
-						h5#affected_zones
-						#zones
-#dialog(title='Help')
-	p "Check before you dig" is a service that allows public infrastructure contractors to know what underground assets (e.g. water and gas pipes) or overhead assets (e.g. electricity and communication cables) may be affected by their work
-	p There are two was to search using the system, by the 'Location Name' and by using your mouse to select a 'Custom Area'
-	#tab_location
-		h5 SEARCH BY NAME
-			ol
-				li Enter this location you will be searching for in the 'Where' field. e.g. Changamwe
-					img(src='/images/help_where.png', style='width:500px')
-				li Click the 'Search' button
-					img(src='/images/help_search.png', style='width:500px')
-				li Results are displayed on a sidebar on the left.
-				li Use the clear button to reset.
-	#tab_custom
-		h5 SEARCH BY CUSTOM AREA
-			ol
-				li Select the 'Custom Area' using the drawing tool on the top right.
-					img(src='/images/help_tools.png', style='height:70px')
-				li Draw the shape. Either a polygon or rectangle
-				li Click the 'Search' button.
+.navbar.navbar-fixed-top
+	.navbar-inner
+		.container-fluid
+			a.brand(href="/") Check Before You Dig &reg;
+			.nav-collapse
+				ul.nav
+					li
+						a(href="#") Home
+				ul.nav.pull-right
+					li
+						a(href='/logout') Logout
+
+.container-fluid
+	.row-fluid
+		.span3
+			form.form-vertical(data-bind="submit: doSearch")
+				fieldset
+					legend Search
+					.control-group
+						label.strong(for='searchTerm') Where
+						input#searchTerm(name='searchTerm', required="required", placeholder='e.g. Changamwe', value='', data-bind="value: searchTerm, disable: isCustomAreaSearch(), valueUpdate: 'afterkeydown'")
+					.control-group
+						label.strong(for='typeOfWork') Type of Work
+						select#typeOfWork(name: "typeOfWork", data-bind="value: typeOfWork")
+							option(value='excavation') Excavation
+							option(value='overhead-repairs') Overhead Repairs
+					.control-group
+						input.btn.btn-primary(type="button", data-bind="click: doSearch, enable: searchTerm() != null && searchResult() == null", value="Search")
+						&nbsp;
+						input.btn(data-bind="click: clearSearch, enable: searchResult() != null || isCustomAreaSearch()", type="button", value="Clear")
+		.span9#map_canvas.map
+
+
+
+
+script(type='text/javascript', src='javascripts/jquery-1.7.1.min.js')
+script(type='text/javascript', src='javascripts/bootstrap.min.js')
+script(type='text/javascript', src='javascripts/knockout.js')
+script(type='text/javascript', src='http://maps.google.com/maps/api/js?sensor=false&libraries=drawing')
+script(type='text/javascript', src='javascripts/web.js')
+script(type='text/javascript', src='javascripts/GeoJSON.js')

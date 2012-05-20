@@ -119,6 +119,9 @@ select {
 .search {
   height: 450px;
 }
+.searches p {
+  padding: 5px;
+}
 .searches li {
   list-style: none;
   padding: 5px;
