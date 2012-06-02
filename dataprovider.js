@@ -205,6 +205,22 @@ DataProvider.prototype.findUsersLastFiveQueries = function(callback, emailAddres
     });
 };
 
+/**
+ * Find a user's last saved search result
+ */
+DataProvider.prototype.findUsersLastQuery = function(callback, emailAddress) {
+    var query = Enquiry.find({});
+    query.where('userEmailAddress', emailAddress);
+    query.limit(1);
+    query.exec(function (err, docs) {
+        if(err) {
+            callback(err);
+        } else {
+            callback(docs);
+        }
+    });
+};
+
 
 exports.DataProvider = DataProvider;
 exports.User = User;

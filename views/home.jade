@@ -34,6 +34,7 @@
 						input.btn(data-bind="click: clearSearch, enable: searchResult() != null || isCustomAreaSearch()", type="button", value="Clear")
 			fieldset(data-bind="visible: searchResult() != null")
 				legend(data-bind="text: (searchResult()? searchResult().pipes().length : \"0\") + \" Results\"")
+				a(href='/generatepdf') Generate PDF
 				br
 				table.table.table-bordered(data-bind="with: searchResult()")
 					thead

@@ -12,6 +12,10 @@ var CONFIG = require('config').Environment;
 var DataProvider = require('./dataprovider').DataProvider;
 var data = new DataProvider();
 
+// PDF generator
+var PDFGenerator = require('./pdfgenerator').PDFGenerator;
+var pdf = new PDFGenerator();
+
 // User
 var User = require('./dataprovider').User;
 
@@ -305,8 +309,26 @@ app.post('/savesearch', function(req, res) {
 });
 
 
+app.get('/generatepdf', function(req, res) {
+	var enquiry;
+	data.findUsersLastQuery(function(enquiries) {
+        enquiry = enquiries;
+    }, req.user.emailAddress);
+    
+    /*
+    for(enq in enquiry) {
+            console.log(enq);
+        }*/
+    
+    
+	pdf.generatePDF(function() {
+		console.log("pdf sent");
+	}, req.user.emailAddress, enquiry);
+});
 
-var port = CONFIG.port;
+
+
+var port = 4000; //CONFIG.port;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });
