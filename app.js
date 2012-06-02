@@ -328,7 +328,7 @@ app.get('/generatepdf', function(req, res) {
 
 
 
-var port = 4000; //CONFIG.port;
+var port = CONFIG.port;
 app.listen(port, function() {
 	console.log("Listening on " + port);
 });
