@@ -28,10 +28,28 @@ PDFGenerator.prototype.generatePDF = function(callback, emailAddress, enquiry) {
 function generate(emailAddress) {
 	u = url.parse("http://maps.googleapis.com/maps/api/staticmap?sensor=false&center=-4.0434771,39.6682065&size=640x640&zoom=16");
 
+var options = {
+  host: u['host'],
+  port: 80,
+  path: u['path'],
+  method: 'GET'
+};
+
+var request = http.request(options, function(res) {
+  console.log('STATUS: ' + res.statusCode);
+  console.log('HEADERS: ' + JSON.stringify(res.headers));
+  res.setEncoding('utf8');
+  res.on('data', function (chunk) {
+    console.log('BODY: ' + chunk);
+  });
+});
+
+/*
 var client = http.createClient(80, u['host']);
 var request = client.request('GET', u['path'], {
 	"host" : u['host']
-});
+});*/
+
 
 console.log('Request made ' + u['host'] + u['path']);
 
