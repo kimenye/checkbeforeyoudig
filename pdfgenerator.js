@@ -11,146 +11,107 @@ var fs = require('fs');
 var PDFDocument = require('pdfkit-memory');
 var request = null;
 
-PDFGenerator = function() {
+PDFGenerator = function () {
 };
 
-PDFGenerator.prototype.generatePDF = function(callback, emailAddress, enquiry) {
-	/*
-	console.log(enquiry);
-		doc = new PDFDocument();
-		doc.text("Check Before You Dig", {align : "center"});
-		mail(doc, emailAddress);*/
-		
-		generate(emailAddress);
+PDFGenerator.prototype.generatePDF = function (callback, emailAddress, enquiry, req, res) {
 
+    var options = {
+        host:'maps.googleapis.com',
+        port:80,
+        method: 'get',
+        path:'/maps/api/staticmap?sensor=false&center=-4.0434771,39.6682065&size=640x640&zoom=16' //TODO: To be created correctly
+    };
+
+    var imageData = '';
+
+    var bufSize = 64 * 1024;
+    var bufPos = 0;
+    var targetBuffer = new Buffer(bufSize);
+    var doc = new PDFDocument();
+
+    var req = http.get(options, function(resp) {
+        console.log("Got response: " + resp.statusCode);
+
+        resp.on("data", function(chunk) {
+            console.log("In data");
+            var chunkLength = chunk.length;
+            console.log("copy from " + bufPos);
+            chunk.copy(targetBuffer, bufPos);
+            bufPos += chunkLength;
+        });
+
+        resp.on('end', function() {
+            console.log("Response ended");
+            //trim the buffer
+            if (bufPos != 0) {
+                targetBuffer = targetBuffer.slice(0, bufPos);
+            }
+            console.log("Final buffer length " + targetBuffer.length);
+
+            doc.imageFromBuffer(targetBuffer, 100, 100);
+            mail(doc, emailAddress);
+            callback(req, res, true);
+        });
+    });
 }
 
-function generate(emailAddress) {
-	u = url.parse("http://maps.googleapis.com/maps/api/staticmap?sensor=false&center=-4.0434771,39.6682065&size=640x640&zoom=16");
 
-var options = {
-  host: u['host'],
-  port: 80,
-  path: u['path'],
-  method: 'GET'
-};
-
-var request = http.request(options, function(res) {
-  console.log('STATUS: ' + res.statusCode);
-  console.log('HEADERS: ' + JSON.stringify(res.headers));
-  res.setEncoding('utf8');
-  res.on('data', function (chunk) {
-    console.log('BODY: ' + chunk);
-  });
-});
-
-/*
-var client = http.createClient(80, u['host']);
-var request = client.request('GET', u['path'], {
-	"host" : u['host']
-});*/
-
-
-console.log('Request made ' + u['host'] + u['path']);
-
-doc = new PDFDocument();
-
-request.addListener('response', function(response) {
-	console.log("Response is " + response.statusCode);
-	if(response.statusCode == 200) {
-		response.setEncoding('binary');
-		var imageData = '';
-
-		var bufSize = 64 * 1024;
-		var bufPos = 0;
-		var buf = new Buffer(bufSize);
-
-		response.addListener('data', function(chunk) {
-			imageData += chunk;
-			var bufNextPos = bufPos + chunk.length;
-			if(bufNextPos == bufSize) {
-				buf.write(chunk, 'binary', bufPos);
-				res.write(buf);
-				bufPos = 0;
-			} else {
-				buf.write(chunk, 'binary', bufPos);
-				bufPos = bufNextPos;
-			}
-
-		});
-
-		response.addListener('end', function() {
-			//fs.writeFile('image.png', imageData, bufPos, 'binary', function(err) {
-				//if(err)
-					//throw err;
-				//console.log('File saved');
-				
-
-				if(bufPos != 0) {
-					buf = buf.slice(0, bufPos);
-				};
-				doc.imageFromBuffer(buf, 100, 100);
-				// doc.write('image.pdf');
-				mail(doc, emailAddress);
-			//});
-		});
-	}
-});
-}
 
 
 // create reusable transport method (opens pool of SMTP connections)
 var smtpTransport = nodemailer.createTransport("SMTP", {
-	service : "Gmail",
-	auth : {
-		user : from,
-		pass : password
-	}
+    service:"Gmail",
+    auth:{
+        user:from,
+        pass:password
+    }
 });
 
-if(request) {
-	request.end();
+if (request) {
+    request.end();
 }
 
 // setup e-mail data with unicode symbols
 function mail(doc, emailAddress) {
-	
-	doc.output(function(out) {
-		console.log("Length of output is " + out.length);
-		stream = new BufferStream({encoding:'binary', size:'flexible'});
 
-		stream.write(out);
-		console.log('The stream is writtable ' + stream.readable);
-		stream.end();
-		
-		
+    doc.output(function (out) {
+        console.log("Length of output is " + out.length);
+        stream = new BufferStream({encoding:'binary', size:'flexible'});
 
-		var mailOptions = {
-			from : "Sprout Consulting <" + from + ">", // sender address
-			to : emailAddress, // list of receivers
-			subject : "Check Before you Dig Report", // Subject line
-			html : "<b>Thank you for using Check Before you Dig. Attached is a pdf document of your search query results.</b>", // html body
-			attachments : [{
-				fileName : "Report.pdf",
-				streamSource : stream
-			}]
-		}
+        stream.write(out);
+        console.log('The stream is writtable ' + stream.readable);
+        stream.end();
 
 
-		// send mail with defined transport object
-		smtpTransport.sendMail(mailOptions, function(error, response) {
-			if(error) {
-				console.log(error);
-			} else {
-				console.log("Message sent: " + response.message);
-			}
+        var mailOptions = {
+            from:"Sprout Consulting <" + from + ">", // sender address
+            to:emailAddress, // list of receivers
+            subject:"Check Before you Dig Report", // Subject line
+            html:"<b>Thank you for using Check Before you Dig. Attached is a pdf document of your search query results.</b>", // html body
+            attachments:[
+                {
+                    fileName:"Report.pdf",
+                    streamSource:stream
+                }
+            ]
+        }
 
-			smtpTransport.close();
-			// shut down the connection pool, no more messages
-		});
-	});
-	
-	
+
+        // send mail with defined transport object
+        smtpTransport.sendMail(mailOptions, function (error, response) {
+            if (error) {
+                console.log(error);
+            } else {
+                console.log("Message sent: " + response.message);
+            }
+
+            smtpTransport.close();
+            // shut down the connection pool, no more messages
+        });
+    });
+
+
 }
 
 exports.PDFGenerator = PDFGenerator;

@@ -314,16 +314,11 @@ app.get('/generatepdf', function(req, res) {
 	data.findUsersLastQuery(function(enquiries) {
         enquiry = enquiries;
     }, req.user.emailAddress);
-    
-    /*
-    for(enq in enquiry) {
-            console.log(enq);
-        }*/
-    
-    
-	pdf.generatePDF(function() {
-		console.log("pdf sent");
-	}, req.user.emailAddress, enquiry);
+
+    pdf.generatePDF(function(req, res, result) {
+        console.log("pdf sent : " + result);
+        res.send("OK");
+    }, req.user.emailAddress, enquiry, req, res);
 });
 
 

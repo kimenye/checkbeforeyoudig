@@ -32,10 +32,11 @@
 						input.btn.btn-primary(type="button", data-bind="click: doSearch, enable: searchTerm() != null && searchResult() == null", value="Search")
 						&nbsp;
 						input.btn(data-bind="click: clearSearch, enable: searchResult() != null || isCustomAreaSearch()", type="button", value="Clear")
+						&nbsp;
+						input#emailMe.btn.btn-success(data-bind="click: emailMe, enable: searchResult() != null || isCustomAreaSearch()", type="button", data-loading-text="Generating..." ,value="Email Results")
+
 			fieldset(data-bind="visible: searchResult() != null")
 				legend(data-bind="text: (searchResult()? searchResult().pipes().length : \"0\") + \" Results\"")
-				a(href='/generatepdf') Generate PDF
-				br
 				table.table.table-bordered(data-bind="with: searchResult()")
 					thead
 						th Id

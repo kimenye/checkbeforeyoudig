@@ -102,6 +102,23 @@ $(document).ready(function() {
             }
         };
 
+        self.emailMe = function() {
+
+            $('#emailMe').button('loading');
+            $.ajax({
+                type: "GET",
+                url: "/generatepdf",
+                success: function(data) {
+                    console.log("Success" + data);
+                    if (data == "OK") {
+//                        alert("Results sent to your registered email");
+                    }
+                    $('#emailMe').button('reset');
+                }
+            });
+
+        };
+
         self.clearSearch = function() {
             self.detach(self.polygon());
             self.polygon(null);
