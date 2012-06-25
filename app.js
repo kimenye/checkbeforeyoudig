@@ -18,6 +18,8 @@ var pdf = new PDFGenerator();
 
 // User
 var User = require('./dataprovider').User;
+//Enquiry
+var Enquiry = require('./dataprovider').Enquiry;
 
 var mailer = require('./utility/mailer');
 var emailMessage = require('./utility/emailMessage');
@@ -309,16 +311,17 @@ app.post('/savesearch', function(req, res) {
 });
 
 
-app.get('/generatepdf', function(req, res) {
-	var enquiry;
+app.post('/generatepdf', function(req, res) {
+	
 	data.findUsersLastQuery(function(enquiries) {
-        enquiry = enquiries;
+		
+		pdf.generatePDF(function(req, res, result) {
+            console.log("pdf sent : " + result);
+            res.send("OK");
+        }, req.user.emailAddress, enquiries, req, res);
+        
     }, req.user.emailAddress);
-
-    pdf.generatePDF(function(req, res, result) {
-        console.log("pdf sent : " + result);
-        res.send("OK");
-    }, req.user.emailAddress, enquiry, req, res);
+    
 });
 
 

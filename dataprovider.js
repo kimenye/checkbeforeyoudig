@@ -150,7 +150,7 @@ var EnquirySchema = new Schema({
 		type: String
 	},
 	enquiryType: {
-		type : Number
+		type : String
 	},
 	searchTerm : {
 		type : String

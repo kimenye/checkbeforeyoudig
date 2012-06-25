@@ -61,8 +61,8 @@ $(document).ready(function() {
      */
 	function ViewModel() {
 		var self = this;
-        var map, geocoder, startingPosition, rectangle;
-        var EnquiryType = { searchByName : 0, searchByCustomArea : 1};
+        var map, geocoder, startingPosition, rectangle, dt;
+        var EnquiryType = { searchByName : "Search By Name", searchByCustomArea : "Search By Custom Area"};
 
 		self.searchTerm = ko.observable("Changamwe");
 		self.typeOfWork = ko.observable();
@@ -103,11 +103,11 @@ $(document).ready(function() {
         };
 
         self.emailMe = function() {
-
             $('#emailMe').button('loading');
             $.ajax({
-                type: "GET",
+                type: "POST",
                 url: "/generatepdf",
+                data: { latitude: map.getCenter().lat(), longitude: map.getCenter().lng(), zoom: map.getZoom(), assetdata: JSON.stringify(dt) },
                 success: function(data) {
                     console.log("Success" + data);
                     if (data == "OK") {
@@ -205,7 +205,7 @@ $(document).ready(function() {
                 dataType: "json",
                 success: function(data) {
                     if (data.data) {
-                        var dt = data.data;
+                        dt = data.data;
                         self.searchResult().pipes(data.data);
                     }
                 }

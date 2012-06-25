@@ -15,12 +15,19 @@ PDFGenerator = function () {
 };
 
 PDFGenerator.prototype.generatePDF = function (callback, emailAddress, enquiry, req, res) {
-
+	
+	var latitude = req.param('latitude');
+	var longitude = req.param('longitude');
+	var zoom = req.param('zoom');
+	var assetdata = req.param('assetdata');
+	
+	var obj = JSON.parse(assetdata);
+	
     var options = {
         host:'maps.googleapis.com',
         port:80,
         method: 'get',
-        path:'/maps/api/staticmap?sensor=false&center=-4.0434771,39.6682065&size=640x640&zoom=16' //TODO: To be created correctly
+        path:'/maps/api/staticmap?sensor=false&center=' + latitude + ',' + longitude + '&size=640x640&zoom=' + zoom //TODO: To be created correctly
     };
 
     var imageData = '';
@@ -49,7 +56,28 @@ PDFGenerator.prototype.generatePDF = function (callback, emailAddress, enquiry, 
             }
             console.log("Final buffer length " + targetBuffer.length);
 
-            doc.imageFromBuffer(targetBuffer, 100, 100);
+			doc.text("Check Before You Dig", {align : "center"});
+            doc.imageFromBuffer(targetBuffer, 15, 100, {fit: [580, 580]});
+            doc.addPage();
+            doc.text("Assets Affected", {align : "center"});
+            
+			for (var i = 0; i < obj.length; i++){
+				
+				var data = obj[i];
+				// doc.text({columns: 3});
+				// doc.text(data.OBJECTID);
+				// doc.text(data.Material);
+				// doc.text(data.PLength);
+				// doc.text(data.OBJECTID + " " + data.Material + " " + data.PLength, {columns: 3});
+				doc.text(data.OBJECTID + " " + data.Material + " " + data.PLength);
+
+			}
+			doc.addPage();
+			doc.text("Query", {align : "center"});
+			doc.text("Date: " + enquiry[0].dateOfEnquiry);
+			doc.text("Type of Work: " + enquiry[0].typeOfWork);
+			doc.text("Enquiry Type: " + enquiry[0].enquiryType);
+			
             mail(doc, emailAddress);
             callback(req, res, true);
         });
@@ -57,14 +85,12 @@ PDFGenerator.prototype.generatePDF = function (callback, emailAddress, enquiry, 
 }
 
 
-
-
 // create reusable transport method (opens pool of SMTP connections)
 var smtpTransport = nodemailer.createTransport("SMTP", {
     service:"Gmail",
     auth:{
-        user:from,
-        pass:password
+        user: from,
+        pass: password
     }
 });
 
