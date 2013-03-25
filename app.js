@@ -167,13 +167,13 @@ app.get('/', function (req, res) {
 });
 
 app.get('/home', function(req, res) {
-	if (!req.loggedIn) {
-		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
-	}
-	else
-	{
+//	if (!req.loggedIn) {
+//		res.render('index', { title: CONFIG.name, layout: 'layout', errors: new Array()})
+//	}
+//	else
+//	{
 		res.render('home', { title: CONFIG.name, layout: 'layout_full'})
-	}
+//	}
 });
 
 app.get('/test', function(req, res) {

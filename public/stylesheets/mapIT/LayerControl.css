@@ -1,0 +1,63 @@
+.deCarta-control-layer {	
+	margin:8px;		
+}
+.deCarta-control-layer .button {
+	float: left;
+	cursor: pointer;
+	margin: 2px;
+}
+
+.deCarta-control-layer .button.street {
+	background-image : url("../../img/map_off.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.satellite {
+	background-image : url("../../img/satellite_off.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.hybrid {
+	background-image : url("../../img/hybrid_off.png");
+	height: 35px;
+	width: 67px;	
+}
+
+
+.deCarta-control-layer .button.street:hover {
+	background-image : url("../../img/map_rollover.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.satellite:hover {
+	background-image : url("../../img/satellite_rollover.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.hybrid:hover {
+	background-image : url("../../img/hybrid_rollover.png");
+	height: 35px;
+	width: 67px;	
+}
+
+.deCarta-control-layer .button.street.selected {
+	background-image : url("../../img/map_on.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.satellite.selected {
+	background-image : url("../../img/satellite_on.png");
+	height: 35px;
+	width: 35px;	
+}
+
+.deCarta-control-layer .button.hybrid.selected {
+	background-image : url("../../img/hybrid_on.png");
+	height: 35px;
+	width: 67px;	
+}

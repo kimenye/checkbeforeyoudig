@@ -1,0 +1,39 @@
+
+.deCarta-control-zoom-mobile {
+	margin:10px 10px 10px 21px;
+}
+
+.deCarta-control-zoomInBtn-mobile {
+	background-color: #cccccc;
+	color: #333333;
+	opacity : 0.7;
+	line-height : 44px;
+	text-align : center;
+	font-size : 22px;
+	height: 44px;
+	width: 44px;
+	margin: 4px;
+	border : 1px solid #aaaaaa;
+	cursor: pointer;
+}
+.deCarta-control-zoomOutBtn-mobile {
+	background-color: #cccccc;
+	color: #333333;
+	opacity : 0.7;
+	line-height : 44px;
+	text-align : center;
+	font-size : 22px;
+	height: 44px;
+	width: 44px;
+	margin: 4px;
+	border : 1px solid #aaaaaa;
+	cursor: pointer;
+}
+
+.deCarta-control-zoomInBtn-mobile:before {
+	content : "+";
+}
+
+.deCarta-control-zoomOutBtn-mobile:before {
+	content : "-";
+}

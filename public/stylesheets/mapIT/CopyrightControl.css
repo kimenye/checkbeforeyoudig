@@ -1,0 +1,14 @@
+
+
+.deCarta-control-copyright {
+	font-family: 'Arial';
+	font-size: 11px;
+	color:black;
+	background-color: #FFF;
+	padding:4px;	
+	margin:1px;
+	opacity: 0.5;
+	-moz-opacity: 0.5;
+	filter:alpha(opacity=5);
+	border: 1px solid black;
+}

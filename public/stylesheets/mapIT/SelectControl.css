@@ -1,0 +1,11 @@
+.deCarta-control-select {
+	margin:10px 18px 10px 8px;
+	width:18px;
+	height:43px;
+}
+.deCarta-control-select-on {
+	background-image : url('../../img/qz_on.png') !important;
+}
+.deCarta-control-select-off {
+	background-image : url('../../img/qz_off.png') !important;
+}

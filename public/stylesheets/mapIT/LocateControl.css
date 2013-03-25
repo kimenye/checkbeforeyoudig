@@ -1,0 +1,11 @@
+.deCarta-control-locate {
+	height:50px;
+	width:50px;
+	margin:2px;
+}
+.deCarta-control-locate-off {
+	background-image : url("../../img/gpsOff.png");
+}
+.deCarta-control-locate-on {
+	background-image : url("../../img/gpsOn.png");
+}

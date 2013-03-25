@@ -1,0 +1,22 @@
+.deCarta-control-overview {
+	width:128px;
+	height:128px;
+	border:1px solid #333;
+	overflow : hidden;
+}
+
+/* hider thingy */
+.deCarta-control-overview-hide {
+	background-image : url('../../img/map_overview_hide.png');
+	border:1px solid #333;
+	position:absolute;
+	width:17px;
+	height:17px;
+	background-size:17px 17px;
+	top:0;
+	left:0;
+	z-index:1000000;
+}
+.deCarta-control-overview-show {
+	background-image : url('../../img/map_overview_show.png');
+}

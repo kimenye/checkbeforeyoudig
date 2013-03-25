@@ -1,0 +1,39 @@
+
+.deCarta-control-zoom {
+	margin:10px 17px 10px 1px;
+}
+
+.deCarta-control-zoomInBtn {
+    background-image: url("../../img/zoom_in.png");
+    height: 21px;
+    width: 20px;
+    margin-left: 4px;
+    cursor: pointer;
+}
+.deCarta-control-zoomOutBtn {
+    background-image: url("../../img/zoom_out.png");
+    height: 21px;
+    width: 20px;
+    margin-left: 4px;
+    cursor: pointer;
+    top:27px;
+}
+.deCarta-control-zoomPillar {
+	background-image: url("../../img/zoom_rail.png");
+	/* PLEASE LOOK AT THE CODE TO UNDERSTAND THE HEIGHT
+	height: (10 * this.zoomLevels)  + px;*/
+	width: 20px;
+	left: 4px;
+	position:relative;
+	cursor: pointer
+}
+.deCarta-control-zoomCursor {
+    background-image: url("../../img/zoom_handle.png");
+    background-repeat: no-repeat;
+    height: 20px;
+    line-height: 20px;
+    left: -5px;
+    width: 36px;
+    position: absolute;
+    cursor: url("../../img/openhand.cur"); 
+}
